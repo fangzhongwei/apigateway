@@ -24,7 +24,5 @@ trait JsonHelper extends SprayJsonSupport with DefaultJsonProtocol {
 //    }
 //  }
 
-  implicit val registerRequestFormat = jsonFormat8(RegisterRequest.apply)
-  implicit val apiResponseFormat = jsonFormat3(ApiResponse.apply)
 
 }

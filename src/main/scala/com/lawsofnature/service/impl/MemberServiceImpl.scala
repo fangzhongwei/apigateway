@@ -3,6 +3,7 @@ package com.lawsofnature.service.impl
 import com.lawsofnature.request.RegisterRequest
 import com.lawsofnature.response.ApiResponse
 import com.lawsofnature.service.MemberService
+import com.lawsofnature.member.client.{MemberClient, Pid}
 
 import scala.concurrent.Future
 
@@ -11,6 +12,8 @@ import scala.concurrent.Future
   */
 class MemberServiceImpl extends MemberService {
   override def register(registerRequest: RegisterRequest): Future[Option[ApiResponse]] = {
-    Future.successful(Some(ApiResponse("0", "11注册成功!111111")))
+    new Pid().Email
+    new MemberClient
+    Future.successful(Some(ApiResponse("0", "register success!")))
   }
 }

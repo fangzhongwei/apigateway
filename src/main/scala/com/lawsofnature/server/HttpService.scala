@@ -23,5 +23,5 @@ object HttpService extends App {
 
   implicit val dispatcher = system.dispatcher
 
-  Http().bindAndHandle(apigatewayServer.apigatewayRoutes, "localhost", 9000)
+  Http().bindAndHandle(apigatewayServer.apigatewayRoutes, "localhost", 9010)
 }

@@ -11,14 +11,19 @@ import com.lawsofnature.service.MemberService
 /**
   * Created by kgoralski on 2016-05-02.
   */
+
 @Named
 class Routes @Inject()(memberService: MemberService) extends JsonHelper {
+
+  implicit val registerRequestFormat = jsonFormat8(RegisterRequest.apply)
+  implicit val apiResponseFormat = jsonFormat3(ApiResponse.apply)
+
   val apigatewayRoutes = {
-    (path("bank") & post) {
+    (path("register") & post) {
       entity(as[RegisterRequest]) { request =>
         onSuccess(memberService.register(request)) {
           case Some(apiResponse) => complete(apiResponse)
-          case None => complete(ApiResponse("1", "", null))
+          case None => complete(ApiResponse("1", ""))
         }
       }
     }
