@@ -19,5 +19,3 @@ libraryDependencies ++=  Seq(
 
 libraryDependencies += "com.zeroc" % "ice" % "3.6.2"
 libraryDependencies += "com.lawsofnature.member" % "memberclient_2.11" % "1.0-SNAPSHOT"
-
-libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.6"

@@ -11,11 +11,9 @@ import com.lawsofnature.service.MemberService
 /**
   * Created by kgoralski on 2016-05-02.
   */
-
 @Named
 class Routes @Inject()(memberService: MemberService) extends JsonHelper {
-
-  implicit val registerRequestFormat = jsonFormat8(RegisterRequest.apply)
+  implicit val registerRequestFormat = jsonFormat7(RegisterRequest.apply)
   implicit val apiResponseFormat = jsonFormat3(ApiResponse.apply)
 
   val apigatewayRoutes = {
