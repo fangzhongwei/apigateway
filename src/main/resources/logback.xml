@@ -20,7 +20,7 @@
     <!-- This is the kafkaAppender -->
     <appender name="kafkaAppender" class="com.lawsofnatrue.logback.KafkaAppender">
         <encoder>
-            <pattern>%highlight([%level]) - [%date] - [%logger] %msg%n</pattern>
+            <pattern>{"date":"%date","level":"%level","logger";"%logger","msg":"%msg"}</pattern>
         </encoder>
         <producerProperties>
             bootstrap.servers=192.168.181.130:9092;
