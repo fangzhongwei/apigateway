@@ -9,8 +9,11 @@ import com.google.inject.{AbstractModule, Guice, TypeLiteral}
 import com.lawsofnature.member.client.{MemberClientService, MemberClientServiceImpl}
 import com.lawsofnature.service.MemberService
 import com.lawsofnature.service.impl.MemberServiceImpl
+import org.slf4j.{Logger, LoggerFactory}
 
 object HttpService extends App {
+
+  val logger:Logger = LoggerFactory.getLogger(getClass)
 
 //  bindListener(Matchers.subclassesOf(MyInitClass.class), new TypeListener() {
 //    @Override
@@ -55,7 +58,7 @@ object HttpService extends App {
 
   Http().bindAndHandle(apigatewayServer.apigatewayRoutes, "localhost", 9010)
 
-  println("http server start up at 9010")
+  logger.info("http server start up at 9010")
 
 //  system.scheduler.schedule()
 }

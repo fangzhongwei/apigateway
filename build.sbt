@@ -10,7 +10,7 @@ libraryDependencies ++=  Seq(
                       "com.typesafe.akka"    %%    "akka-http-spray-json-experimental"    % "2.4.11",
                       "com.typesafe.akka"    %%    "akka-stream" % "2.4.11",
                       "com.typesafe.akka"    %%    "akka-http-core" % "2.4.11",
-                      "ch.qos.logback"       %     "logback-classic"          %      "1.1.3",
+//                      "ch.qos.logback"       %     "logback-classic"          %      "1.1.3",
                       "org.scalatest"        %%    "scalatest"    	      %      "2.2.5"     %    "test",
                       "com.h2database"       % 	   "h2"                       %      "1.4.187",
                       "net.codingwell" %% "scala-guice" % "4.0.1",
@@ -19,3 +19,5 @@ libraryDependencies ++=  Seq(
 
 libraryDependencies += "com.zeroc" % "ice" % "3.6.2"
 libraryDependencies += "com.lawsofnature.member" % "memberclient_2.11" % "1.0-SNAPSHOT"
+libraryDependencies += "com.lawsofnature.logback" % "kafka-logback_2.11" % "1.0-SNAPSHOT"
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.7"

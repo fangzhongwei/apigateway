@@ -7,12 +7,14 @@ import com.lawsofnature.json.JsonHelper
 import com.lawsofnature.request.RegisterRequest
 import com.lawsofnature.response.ApiResponse
 import com.lawsofnature.service.MemberService
+import org.slf4j.{Logger, LoggerFactory}
 
 /**
   * Created by kgoralski on 2016-05-02.
   */
 @Named
 class Routes @Inject()(memberService: MemberService) extends JsonHelper {
+  val logger:Logger = LoggerFactory.getLogger(getClass)
   implicit val registerRequestFormat = jsonFormat7(RegisterRequest.apply)
   implicit val apiResponseFormat = jsonFormat3(ApiResponse.apply)
 
@@ -24,6 +26,9 @@ class Routes @Inject()(memberService: MemberService) extends JsonHelper {
           case None => complete(ApiResponse("1", ""))
         }
       }
+    }~ (path("banks") & get) {
+      logger.info("receive get banks request")
+      complete("logs")
     }
   }
 }
