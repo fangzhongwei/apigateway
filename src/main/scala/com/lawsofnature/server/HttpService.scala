@@ -1,54 +1,35 @@
 package com.lawsofnature.server
 
+import java.util
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
-import com.google.inject.matcher.{Matcher, Matchers}
-import com.google.inject.spi.{InjectionListener, TypeEncounter, TypeListener}
-import com.google.inject.{AbstractModule, Guice, TypeLiteral}
+import com.google.inject.name.Names
+import com.google.inject.{AbstractModule, Guice}
+import com.lawsofnatrue.common.ice.{ConfigHelper, IcePrxFactory, IcePrxFactoryImpl}
 import com.lawsofnature.member.client.{MemberClientService, MemberClientServiceImpl}
-import com.lawsofnature.service.MemberService
-import com.lawsofnature.service.impl.MemberServiceImpl
+import com.lawsofnature.service.{MemberService, MemberServiceImpl}
+import com.typesafe.config.ConfigFactory
 import org.slf4j.{Logger, LoggerFactory}
 
 object HttpService extends App {
 
-  val logger:Logger = LoggerFactory.getLogger(getClass)
+  val LOGGER: Logger = LoggerFactory.getLogger(getClass)
 
-//  bindListener(Matchers.subclassesOf(MyInitClass.class), new TypeListener() {
-//    @Override
-//    public <I> void hear(final TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
-//      typeEncounter.register(new InjectionListener<I>() {
-//        @Override
-//        public void afterInjection(Object i) {
-//          MyInitClass m = (MyInitClass) i;
-//          m.init();
-//        }
-//      });
-//      }
-//      });
+  val conf = ConfigFactory.load()
 
-  val injectionListener: InjectionListener[MemberClientService] = new InjectionListener[MemberClientService]() {
-    override def afterInjection(memberClientService: MemberClientService): Unit = {
-      memberClientService.initClient
-    }
-  }
-
-//  val typeListener: TypeListener = new TypeListener() {
-//    override def hear[I](typeLiteral: TypeLiteral[I], typeEncounter: TypeEncounter[I]): Unit = {
-//      typeEncounter.register(injectionListener)
-//    }
-//  }
-//
   private val injector = Guice.createInjector(new AbstractModule() {
     override def configure() {
-      bind(classOf[MemberService]).to(classOf[MemberServiceImpl])
-      bind(classOf[MemberClientService]).to(classOf[MemberClientServiceImpl])
-//      bindListener(Matchers.subclassesOf(classOf[MemberClientService]), typeListener)
+      val map: util.HashMap[String, String] = ConfigHelper.configMap
+      Names.bindProperties(binder(), map)
+      bind(classOf[MemberService]).to(classOf[MemberServiceImpl]).asEagerSingleton()
+      bind(classOf[IcePrxFactory]).to(classOf[IcePrxFactoryImpl]).asEagerSingleton()
+      bind(classOf[MemberClientService]).to(classOf[MemberClientServiceImpl]).asEagerSingleton()
     }
   })
 
-  private val apigatewayServer = injector.getInstance(classOf[Routes])
+  injector.getInstance(classOf[MemberClientService]).initClient
 
   implicit val system: ActorSystem = ActorSystem()
 
@@ -56,9 +37,11 @@ object HttpService extends App {
 
   implicit val dispatcher = system.dispatcher
 
-  Http().bindAndHandle(apigatewayServer.apigatewayRoutes, "localhost", 9010)
+  val host: String = conf.getString("http.host")
+  val port: Int = conf.getInt("http.port")
+  Http().bindAndHandle(injector.getInstance(classOf[Routes]).apigatewayRoutes, host, port)
 
-  logger.info("http server start up at 9010")
+  LOGGER.info("http server start up at " + port)
 
-//  system.scheduler.schedule()
+  //  system.scheduler.schedule()
 }

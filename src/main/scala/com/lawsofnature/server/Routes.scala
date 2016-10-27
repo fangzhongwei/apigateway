@@ -28,7 +28,10 @@ class Routes @Inject()(memberService: MemberService) extends JsonHelper {
       }
     }~ (path("banks") & get) {
       logger.info("receive get banks request")
-      complete("logs")
+      onSuccess(memberService.register(RegisterRequest(1,"aa","aa",1,"15812346678","aab","abc"))) {
+        case Some(apiResponse) => complete(apiResponse)
+        case None => complete(ApiResponse("1", ""))
+      }
     }
   }
 }

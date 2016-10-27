@@ -21,3 +21,8 @@ libraryDependencies += "com.zeroc" % "ice" % "3.6.2"
 libraryDependencies += "com.lawsofnature.member" % "memberclient_2.11" % "1.0-SNAPSHOT"
 libraryDependencies += "com.lawsofnature.logback" % "kafka-logback_2.11" % "1.0-SNAPSHOT"
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.7"
+// https://mvnrepository.com/artifact/com.rabbitmq/amqp-client
+libraryDependencies += "com.rabbitmq" % "amqp-client" % "3.6.5"
+// https://mvnrepository.com/artifact/org.springframework/spring-core
+libraryDependencies += "org.springframework" % "spring-core" % "4.3.3.RELEASE"
+
