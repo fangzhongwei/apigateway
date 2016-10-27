@@ -37,6 +37,7 @@
         <!--<topic>test</topic>-->
     <!--</appender>-->
 
+
     <!-- 异步输出 -->
     <appender name="asyncAppender" class="ch.qos.logback.classic.AsyncAppender">
         <discardingThreshold>0</discardingThreshold>
