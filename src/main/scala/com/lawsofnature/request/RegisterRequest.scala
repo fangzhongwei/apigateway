@@ -1,15 +1,38 @@
 package com.lawsofnature.request
 
+import com.lawsofnature.common.exception.ServiceErrorCode._
 import com.lawsofnature.helper.RegHelper
+import org.apache.commons.lang.StringUtils
 
 /**
   * Created by fangzhongwei on 2016/10/10.
   */
-case class RegisterRequest(dt: Int, fp: String, un: String, pid: Int, m: String, e: String, pwd: String) {
-  require(1 == dt || 2 == dt, "invalid device type")
-  require(fp.length() <= 256, "finger print too long")
-  require(un.length() <= 64, "username too long")
-  require(1 == pid || 2 == pid, "invalid pid type")
-  require(m.length > 0 || e.length > 0, "identity empty")
-  require(pwd.length > 0, "identity empty")
+case class RegisterRequest(ti: String, dt: Int, di: String, un: String, pid: Int, m: String, e: String, pwd: String) {
+  def validate(): Option[ServiceErrorCode] = {
+    var error: Option[ServiceErrorCode] = None;
+    if (StringUtils.isBlank(ti)) {
+      error = Some(EC_INVALID_REQUEST)
+    } else if (1 != dt && 2 != dt) {
+      error = Some(EC_INVALID_REQUEST)
+    } else if (StringUtils.isBlank(di) || di.length > 256) {
+      error = Some(EC_INVALID_REQUEST)
+    } else if (StringUtils.isBlank(un)) {
+      error = Some(EC_INVALID_REQUEST)
+    } else if (un.length > 64) {
+      error = Some(EC_UC_USERNAME_LENGTH_LIMIT)
+    } else if (1 != pid && 2 != pid) {
+      error = Some(EC_INVALID_REQUEST)
+    } else if (1 == pid && !RegHelper.isMobile(m)) {
+      error = Some(EC_UC_INVALID_MOBILE)
+    } else if (2 == pid && !RegHelper.isEmail(e)) {
+      error = Some(EC_UC_INVALID_EMAIL)
+    } else if (2 == pid && e.length > 64) {
+      error = Some(EC_UC_EMAIL_LENGTH_LIMIT)
+    } else if (StringUtils.isBlank(pwd)) {
+      error = Some(EC_INVALID_REQUEST)
+    } else if (pwd.length <7 || pwd.length > 16) {
+      error = Some(EC_UC_PASSWORD_LENGTH_LIMIT)
+    }
+    error
+  }
 }

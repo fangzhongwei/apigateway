@@ -22,48 +22,52 @@ class MemberServiceImpl @Inject()(memberClient: MemberClientService) extends Mem
   val logger = LoggerFactory.getLogger(this.getClass)
 
   override def register(registerRequest: RegisterRequest): Future[Option[ApiResponse]] = {
+
+    logger.info("register request1:" + registerRequest)
+
+    if(1 == 1) throw new Exception
+
     val response = Promise[Option[ApiResponse]]()
 
-    logger.info("register request:" + registerRequest)
     val mobile: String = registerRequest.m
     val email: String = registerRequest.e
     val username: String = registerRequest.un
     val pid: Int = registerRequest.pid
 
-    if (1 == pid && !RegHelper.isMobile(mobile)) {
-       response.success(Some(ApiResponse("1", "invalid mobile")))
-    } else if (2 == pid && !RegHelper.isEmail(email)) {
-      response.success(Some(ApiResponse("2", "invalid email")))
-    } else {
-      if (1 == pid) {
-        val memberCarrier: MemberCarrier = memberClient.getMemberByMobile(mobile)
-        if (memberCarrier != null) {
-          response.success(Some(ApiResponse("1", "taken mobile")))
-
-          response.future
-        }
-      } else if (2 == pid) {
-        val memberCarrier: MemberCarrier = memberClient.getMemberByEmail(email)
-        if (memberCarrier != null) {
-          response.success(Some(ApiResponse("2", "taken email")))
-        }
-      } else {
-        response.success(Some(ApiResponse("3", "invalid pid")))
-      }
-
-      if (memberClient.getMemberByUsername(username) != null) {
-        response.success(Some(ApiResponse("5", "username taken")))
-      } else {
-        val carrier = new MemberCarrier(0, registerRequest.dt, registerRequest.fp, registerRequest.un, registerRequest.pid, mobile, email, registerRequest.pwd)
-        val r: RegisterResponse = memberClient.register(carrier)
-
-        if (r.success) {
-          response.success(Some(ApiResponse("0", "register success!")))
-        } else {
-          response.success(Some(ApiResponse(r.code, r.message)))
-        }
-      }
-    }
+//    if (1 == pid && !RegHelper.isMobile(mobile)) {
+//       response.success(Some(ApiResponse("1", "invalid mobile")))
+//    } else if (2 == pid && !RegHelper.isEmail(email)) {
+//      response.success(Some(ApiResponse("2", "invalid email")))
+//    } else {
+//      if (1 == pid) {
+//        val memberCarrier: MemberCarrier = memberClient.getMemberByMobile(mobile)
+//        if (memberCarrier != null) {
+//          response.success(Some(ApiResponse("1", "taken mobile")))
+//
+//          response.future
+//        }
+//      } else if (2 == pid) {
+//        val memberCarrier: MemberCarrier = memberClient.getMemberByEmail(email)
+//        if (memberCarrier != null) {
+//          response.success(Some(ApiResponse("2", "taken email")))
+//        }
+//      } else {
+//        response.success(Some(ApiResponse("3", "invalid pid")))
+//      }
+//
+//      if (memberClient.getMemberByUsername(username) != null) {
+//        response.success(Some(ApiResponse("5", "username taken")))
+//      } else {
+//        val carrier = new MemberCarrier(0, registerRequest.dt, registerRequest.fp, registerRequest.un, registerRequest.pid, mobile, email, registerRequest.pwd)
+//        val r: RegisterResponse = memberClient.register(carrier)
+//
+//        if (r.success) {
+//          response.success(Some(ApiResponse("0", "register success!")))
+//        } else {
+//          response.success(Some(ApiResponse(r.code, r.message)))
+//        }
+//      }
+//    }
 
     response.future
   }
