@@ -3,6 +3,8 @@ package com.lawsofnature.service
 import javax.inject.Inject
 
 import RpcMember.{MemberCarrier, RegisterResponse}
+import com.lawsofnature.common.exception.ServiceErrorCode._
+import com.lawsofnature.common.exception.ServiceException
 import com.lawsofnature.helper.RegHelper
 import com.lawsofnature.member.client.MemberClientService
 import com.lawsofnature.request.RegisterRequest
@@ -23,11 +25,12 @@ class MemberServiceImpl @Inject()(memberClient: MemberClientService) extends Mem
 
   override def register(registerRequest: RegisterRequest): Future[Option[ApiResponse]] = {
 
-    logger.info("register request1:" + registerRequest)
-
-    if(1 == 1) throw new Exception
-
     val response = Promise[Option[ApiResponse]]()
+
+    logger.info("register request12:" + registerRequest)
+
+    if(1 == 1) throw new ServiceException(EC_UC_PASSWORD_LENGTH_LIMIT)
+
 
     val mobile: String = registerRequest.m
     val email: String = registerRequest.e
