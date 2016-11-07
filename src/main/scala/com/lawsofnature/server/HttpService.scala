@@ -10,6 +10,7 @@ import akka.stream.ActorMaterializer
 import com.google.inject.name.Names
 import com.google.inject.{AbstractModule, Guice}
 import com.lawsofnatrue.common.ice.{ConfigHelper, IcePrxFactory, IcePrxFactoryImpl}
+import com.lawsofnature.action.{RegisterAction, RegisterActionImpl}
 import com.lawsofnature.common.exception.ServiceException
 import com.lawsofnature.factory.ResponseFactory
 import com.lawsofnature.member.client.{MemberClientService, MemberClientServiceImpl}
@@ -18,7 +19,6 @@ import com.typesafe.config.ConfigFactory
 import org.slf4j.{Logger, LoggerFactory}
 
 object HttpService extends App {
-
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
   val conf = ConfigFactory.load()
@@ -44,6 +44,7 @@ object HttpService extends App {
       bind(classOf[MemberService]).to(classOf[MemberServiceImpl]).asEagerSingleton()
       bind(classOf[IcePrxFactory]).to(classOf[IcePrxFactoryImpl]).asEagerSingleton()
       bind(classOf[MemberClientService]).to(classOf[MemberClientServiceImpl]).asEagerSingleton()
+      bind(classOf[RegisterAction]).to(classOf[RegisterActionImpl]).asEagerSingleton()
 
       //      bindInterceptor(Matchers.subclassesOf(), Matchers.annotatedWith(classOf[ExceptionInterceptor]), inte )
     }
