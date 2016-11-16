@@ -18,8 +18,6 @@ class Routes @Inject()(registerAction: RegisterAction) {
 
   val myExceptionHandler: ExceptionHandler = ExceptionHandler {
     case ex: Exception =>
-      println("eeeeeeeee")
-      ex.printStackTrace()
       extractUri { uri =>
         logger.error("apigateway", ex)
         println(s"Request to $uri could not be handled normally")
@@ -35,10 +33,8 @@ class Routes @Inject()(registerAction: RegisterAction) {
         }
       }
     } ~ (path("banks") & post) {
-      logger.info("receive get banks request")
       entity(as[String]) { request =>
         logger.info(request)
-        println(DESUtils.decrypt(request, "12345678"))
         complete {
           "Order received12"
         }

@@ -50,7 +50,7 @@ object HttpService extends App {
     }
   })
 
-  //  injector.getInstance(classOf[MemberClientService]).initClient
+    injector.getInstance(classOf[MemberClientService]).initClient
 
   implicit val system: ActorSystem = ActorSystem()
 
@@ -65,7 +65,6 @@ object HttpService extends App {
   implicit def myExceptionHandler: ExceptionHandler = ExceptionHandler {
     case ex: ServiceException =>
       logger.error("ServiceException", ex)
-      ex.printStackTrace()
       println("ServiceExceptionServiceExceptionServiceException")
       ResponseFactory.serviceErrorResponse(ex.serviceErrorCode)
     case ex: Exception =>

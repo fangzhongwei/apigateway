@@ -5,9 +5,16 @@ import com.lawsofnature.helper.RegHelper
 import org.apache.commons.lang.StringUtils
 
 /**
+  * ti traceId
+  * dt deviceType
+  * di deviceIdentity
+  * un username
+  * pid platform type
+  * i identity
+  * pwd password
   * Created by fangzhongwei on 2016/10/10.
   */
-case class RegisterRequest(ti: String, dt: Int, di: String, un: String, pid: Int, m: String, e: String, pwd: String) {
+case class RegisterRequest(ti: String, dt: Int, di: String, un: String, pid: Int, i: String, pwd: String) {
   def validate(): Option[ServiceErrorCode] = {
     var error: Option[ServiceErrorCode] = None;
     if (StringUtils.isBlank(ti)) {
@@ -22,11 +29,11 @@ case class RegisterRequest(ti: String, dt: Int, di: String, un: String, pid: Int
       error = Some(EC_UC_USERNAME_LENGTH_LIMIT)
     } else if (1 != pid && 2 != pid) {
       error = Some(EC_INVALID_REQUEST)
-    } else if (1 == pid && !RegHelper.isMobile(m)) {
+    } else if (1 == pid && !RegHelper.isMobile(i)) {
       error = Some(EC_UC_INVALID_MOBILE)
-    } else if (2 == pid && !RegHelper.isEmail(e)) {
+    } else if (2 == pid && !RegHelper.isEmail(i)) {
       error = Some(EC_UC_INVALID_EMAIL)
-    } else if (2 == pid && e.length > 64) {
+    } else if (2 == pid && i.length > 64) {
       error = Some(EC_UC_EMAIL_LENGTH_LIMIT)
     } else if (StringUtils.isBlank(pwd)) {
       error = Some(EC_INVALID_REQUEST)
