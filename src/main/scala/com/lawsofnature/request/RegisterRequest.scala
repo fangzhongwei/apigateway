@@ -16,7 +16,7 @@ import org.apache.commons.lang.StringUtils
   */
 case class RegisterRequest(ti: String, dt: Int, di: String, un: String, pid: Int, i: String, pwd: String) {
   def validate(): Option[ServiceErrorCode] = {
-    var error: Option[ServiceErrorCode] = None;
+    var error: Option[ServiceErrorCode] = None
     if (StringUtils.isBlank(ti)) {
       error = Some(EC_INVALID_REQUEST)
     } else if (1 != dt && 2 != dt) {

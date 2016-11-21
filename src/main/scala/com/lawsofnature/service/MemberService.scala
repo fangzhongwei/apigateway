@@ -2,7 +2,9 @@ package com.lawsofnature.service
 
 import javax.inject.Inject
 
-import RpcMember.MemberCarrier
+import RpcMember.{BaseResponse, MemberRegisterRequest}
+import com.lawsofnature.enumeration.SuccessResponse
+import com.lawsofnature.factory.ResponseFactory
 import com.lawsofnature.member.client.MemberClientService
 import com.lawsofnature.request.RegisterRequest
 import com.lawsofnature.response.ApiResponse
@@ -14,24 +16,19 @@ import scala.concurrent.{Future, Promise}
   * Created by fangzhongwei on 2016/10/10.
   */
 trait MemberService {
-  def register(registerRequest: RegisterRequest): Future[Option[ApiResponse]]
+  def register(registerRequest: RegisterRequest): Future[Option[BaseResponse]]
 }
 
 class MemberServiceImpl @Inject()(memberClient: MemberClientService) extends MemberService {
   val logger = LoggerFactory.getLogger(this.getClass)
 
-  override def register(registerRequest: RegisterRequest): Future[Option[ApiResponse]] = {
-    val response = Promise[Option[ApiResponse]]()
-
+  override def register(registerRequest: RegisterRequest): Future[Option[BaseResponse]] = {
+    val response = Promise[Option[BaseResponse]]()
     Future {
       logger.info("register request: {}", registerRequest)
-      val carrier = new MemberCarrier(0, registerRequest.dt, registerRequest.fp, registerRequest.un, registerRequest.pid, mobile, email, registerRequest.pwd)
-      memberClient.register(carrier).success match {
-        case true =>
-          response.success(Some(ApiResponse("0", "register success!")))
-        case false =>
-          response.success(Some(ApiResponse(r.code, r.message)))
-      }
+      val carrier = new MemberRegisterRequest("ip", registerRequest.dt, registerRequest.di, registerRequest.un, registerRequest.pid, registerRequest.i, registerRequest.pwd)
+      val baseResponse: BaseResponse = memberClient.register(registerRequest.ti, carrier)
+      response.success(Some(baseResponse))
     }
     response.future
   }
