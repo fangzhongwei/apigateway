@@ -27,7 +27,7 @@ class RegisterActionImpl @Inject()(memberService: MemberService) extends Registe
     val registerRequest: RegisterRequest = JsonHelper.read[RegisterRequest](DESUtils.decrypt(body, Constant.defaultDesKey), classOf[RegisterRequest])
     registerRequest.validate() match {
       case Some(error) => ResponseFactory.serviceErrorResponse(error)
-      case None => onSuccess(memberService.register(registerRequest)) {
+      case None => onSuccess(memberService.register(ip, registerRequest)) {
         case Some(response) =>
           response.success match {
             case true =>

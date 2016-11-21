@@ -5,7 +5,6 @@ import javax.inject.{Inject, Named}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.ExceptionHandler
 import com.lawsofnature.action.RegisterAction
-import com.lawsofnature.common.edecrypt.DESUtils
 import com.lawsofnature.factory.ResponseFactory
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -27,10 +26,13 @@ class Routes @Inject()(registerAction: RegisterAction) {
 
   val apigatewayRoutes =
     (path("register") & post) {
-      entity(as[String]) {
-        raw => {
-          registerAction.register(raw)
-        }
+      headerValueByName("X-Real-IP") {
+        ip =>
+          entity(as[String]) {
+            raw => {
+              registerAction.register(ip, raw)
+            }
+          }
       }
     } ~ (path("banks") & post) {
       entity(as[String]) { request =>
