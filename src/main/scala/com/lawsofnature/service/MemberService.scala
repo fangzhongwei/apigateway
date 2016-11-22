@@ -2,9 +2,9 @@ package com.lawsofnature.service
 
 import javax.inject.Inject
 
-import RpcMember.{BaseResponse, MemberRegisterRequest}
+import RpcMember.{BaseResponse, MemberRegisterRequest, MemberResponse}
 import com.lawsofnature.member.client.MemberClientService
-import com.lawsofnature.request.RegisterRequest
+import com.lawsofnature.request.{CheckIdentityRequest, RegisterRequest}
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.{Future, Promise}
@@ -14,6 +14,8 @@ import scala.concurrent.{Future, Promise}
   */
 trait MemberService {
   def register(ip: String, registerRequest: RegisterRequest): Future[Option[BaseResponse]]
+
+  def checkIdentity(checkIdentityRequest: CheckIdentityRequest): Future[Option[MemberResponse]]
 }
 
 class MemberServiceImpl @Inject()(memberClient: MemberClientService) extends MemberService {
@@ -24,6 +26,14 @@ class MemberServiceImpl @Inject()(memberClient: MemberClientService) extends Mem
     Future {
       logger.info("register request: {}", registerRequest)
       response.success(Some(memberClient.register(registerRequest.ti, new MemberRegisterRequest(ip, registerRequest.lat, registerRequest.lng, registerRequest.dt, registerRequest.di, registerRequest.un, registerRequest.pid, registerRequest.i, registerRequest.pwd))))
+    }
+    response.future
+  }
+
+  override def checkIdentity(checkIdentityRequest: CheckIdentityRequest): Future[Option[MemberResponse]] = {
+    val response = Promise[Option[MemberResponse]]()
+    Future {
+      response.success(Some(memberClient.getMemberByIdentity(checkIdentityRequest.ti, checkIdentityRequest.i, checkIdentityRequest.pid)))
     }
     response.future
   }

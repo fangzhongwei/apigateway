@@ -5,7 +5,10 @@ import javax.inject.{Inject, Named}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.ExceptionHandler
 import com.lawsofnature.action.RegisterAction
+import com.lawsofnature.common.edecrypt.DESUtils
 import com.lawsofnature.factory.ResponseFactory
+import com.lawsofnature.helper.{Constant, JsonHelper}
+import com.lawsofnature.request.{CheckIdentityRequest, RegisterRequest}
 import org.slf4j.{Logger, LoggerFactory}
 
 /**
@@ -29,20 +32,17 @@ class Routes @Inject()(registerAction: RegisterAction) {
       headerValueByName("X-Real-IP") {
         ip =>
           entity(as[String]) {
-            raw => {
-              registerAction.register(ip, raw)
+            body => {
+              registerAction.register(ip, JsonHelper.read[RegisterRequest](DESUtils.decrypt(body, Constant.defaultDesKey), classOf[RegisterRequest]))
             }
           }
       }
-    } ~ (path("banks") & post) {
-      entity(as[String]) { request =>
-        logger.info(request)
-        complete {
-          "Order received12"
-        }
+    } ~ (path("check-identity") & post) {
+      entity(as[String]) { body =>
+        registerAction.checkIdentity(JsonHelper.read[CheckIdentityRequest](DESUtils.decrypt(body, Constant.defaultDesKey), classOf[CheckIdentityRequest]))
       }
     } ~ handleExceptions(myExceptionHandler) {
-      println("aaaaaaaaa")
+      logger.error("system error")
       ResponseFactory.commonInvalidRequestResponse()
     }
 }
