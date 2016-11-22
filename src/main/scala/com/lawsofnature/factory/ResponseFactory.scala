@@ -14,7 +14,7 @@ import com.lawsofnature.response.ApiResponse
   * Created by fangzhongwei on 2016/11/3.
   */
 object ResponseFactory {
-  private val successResponseCode = "00"
+  private val successResponseCode = 0
 
   //error code cache
   private val successConstResponseMap = scala.collection.mutable.HashMap[SuccessResponse.SuccessResponse, StandardRoute]()
@@ -22,7 +22,7 @@ object ResponseFactory {
 
   //const response cache
   private val serviceErrorResponseMap = scala.collection.mutable.HashMap[ServiceErrorCode.ServiceErrorCode, StandardRoute]()
-  ServiceErrorCode.values.foreach(v => serviceErrorResponseMap += (v -> complete(DESUtils.encrypt(JsonHelper.writeValueAsString(ApiResponse(v.id.toString, v.toString)), Constant.defaultDesKey))))
+  ServiceErrorCode.values.foreach(v => serviceErrorResponseMap += (v -> complete(DESUtils.encrypt(JsonHelper.writeValueAsString(ApiResponse(v.id, v.toString)), Constant.defaultDesKey))))
 
   def successConstResponse(response: SuccessResponse.SuccessResponse): StandardRoute = successConstResponseMap(response)
 
