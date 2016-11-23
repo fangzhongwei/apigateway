@@ -17,6 +17,14 @@ case class CheckIdentityRequest(ti: String, i: String, pid: Int) {
       error = Some(EC_INVALID_REQUEST)
     } else if (StringUtils.isBlank(i)) {
       error = Some(EC_INVALID_REQUEST)
+    } else if (1 != pid && 2 != pid) {
+      error = Some(EC_INVALID_REQUEST)
+    } else if (1 == pid && !RegHelper.isMobile(i)) {
+      error = Some(EC_UC_INVALID_MOBILE)
+    } else if (2 == pid && !RegHelper.isEmail(i)) {
+      error = Some(EC_UC_INVALID_EMAIL)
+    } else if (2 == pid && i.length > 64) {
+      error = Some(EC_UC_EMAIL_LENGTH_LIMIT)
     }
     error
   }
