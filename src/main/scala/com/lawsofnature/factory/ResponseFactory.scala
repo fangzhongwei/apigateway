@@ -32,8 +32,7 @@ object ResponseFactory {
 
   def commonInvalidRequestResponse(): StandardRoute = serviceErrorResponse(EC_INVALID_REQUEST)
 
-  def response(apiResponse: ApiResponse): StandardRoute = complete(DESUtils.encrypt(JsonHelper.writeValueAsString(apiResponse), Constant.defaultDesKey))
-
+  def response(apiResponse: ApiResponse, salt:String): StandardRoute = complete(DESUtils.encrypt(JsonHelper.writeValueAsString(apiResponse), salt))
 
 //  //error code cache
 //  private val successConstResponseMap = scala.collection.mutable.HashMap[SuccessResponse.SuccessResponse, StandardRoute]()

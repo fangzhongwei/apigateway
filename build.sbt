@@ -10,7 +10,6 @@ libraryDependencies ++=  Seq(
                       "com.typesafe.akka"    %%    "akka-http-spray-json-experimental"    % "2.4.11",
                       "com.typesafe.akka"    %%    "akka-stream" % "2.4.11",
                       "com.typesafe.akka"    %%    "akka-http-core" % "2.4.11",
-//                      "ch.qos.logback"       %     "logback-classic"          %      "1.1.3",
                       "org.scalatest"        %%    "scalatest"    	      %      "2.2.5"     %    "test",
                       "com.h2database"       % 	   "h2"                       %      "1.4.187",
                       "net.codingwell" %% "scala-guice" % "4.0.1",
@@ -23,6 +22,7 @@ libraryDependencies += "com.lawsofnature.member" % "memberclient_2.11" % "1.0-SN
 libraryDependencies += "com.lawsofnature.logback" % "kafka-logback_2.11" % "1.0-SNAPSHOT"
 libraryDependencies += "com.lawsofnature.common" % "common-error_2.11" % "1.0"
 libraryDependencies += "com.lawsofnature.common" % "common-edecrypt_2.11" % "1.0"
+libraryDependencies += "com.lawsofnature.client" % "ssoclient_2.11" % "1.0"
 
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.7"
 // https://mvnrepository.com/artifact/com.rabbitmq/amqp-client

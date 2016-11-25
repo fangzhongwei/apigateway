@@ -16,12 +16,10 @@ import org.apache.commons.lang.StringUtils
   * pwd password
   * Created by fangzhongwei on 2016/10/10.
   */
-case class RegisterRequest(ti: String, lat: String, lng: String, dt: Int, di: String, un: String, pid: Int, i: String, pwd: String) {
+case class RegisterRequest( lat: String, lng: String, ctry: String, pro: String, c: String, cty: String, addr: String, dt: Int, di: String, un: String, pid: Int, i: String, pwd: String) {
   def validate(): Option[ServiceErrorCode] = {
     var error: Option[ServiceErrorCode] = None
-    if (StringUtils.isBlank(ti)) {
-      error = Some(EC_INVALID_REQUEST)
-    } else if (StringUtils.isBlank(lat)) {
+    if (StringUtils.isBlank(lat)) {
       error = Some(EC_INVALID_REQUEST)
     } else if (StringUtils.isBlank(lng)) {
       error = Some(EC_INVALID_REQUEST)

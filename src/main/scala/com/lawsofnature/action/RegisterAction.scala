@@ -15,18 +15,18 @@ import org.slf4j.{Logger, LoggerFactory}
   * Created by fangzhongwei on 2016/11/7.
   */
 trait RegisterAction {
-  def register(ip: String, registerRequest: RegisterRequest): Route
+  def register(traceId: String, ip: String, registerRequest: RegisterRequest): Route
 
-  def checkIdentity(checkIdentityRequest: CheckIdentityRequest): Route
+  def checkIdentity(traceId: String, checkIdentityRequest: CheckIdentityRequest): Route
 }
 
 class RegisterActionImpl @Inject()(memberService: MemberService) extends RegisterAction {
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
-  def register(ip: String, registerRequest: RegisterRequest): Route = {
+  def register(traceId: String, ip: String, registerRequest: RegisterRequest): Route = {
     registerRequest.validate() match {
       case Some(error) => ResponseFactory.serviceErrorResponse(error)
-      case None => onSuccess(memberService.register(ip, registerRequest)) {
+      case None => onSuccess(memberService.register(traceId, ip, registerRequest)) {
         case Some(response) =>
           response.success match {
             case true =>
@@ -40,10 +40,10 @@ class RegisterActionImpl @Inject()(memberService: MemberService) extends Registe
     }
   }
 
-  override def checkIdentity(checkIdentityRequest: CheckIdentityRequest): Route = {
+  override def checkIdentity(traceId: String, checkIdentityRequest: CheckIdentityRequest): Route = {
     checkIdentityRequest.validate() match {
       case Some(error) => ResponseFactory.serviceErrorResponse(error)
-      case None => onSuccess(memberService.checkIdentity(checkIdentityRequest)) {
+      case None => onSuccess(memberService.checkIdentity(traceId, checkIdentityRequest)) {
         case Some(response) =>
           response.success match {
             case true => checkIdentityRequest.pid match {
