@@ -12,12 +12,13 @@ import com.google.inject.matcher.Matchers
 import com.google.inject.name.Names
 import com.google.inject.{AbstractModule, Binding, Guice, Key}
 import com.lawsofnatrue.common.ice.{ConfigHelper, IcePrxFactory, IcePrxFactoryImpl}
-import com.lawsofnature.action.{RegisterAction, RegisterActionImpl}
+import com.lawsofnature.action.{RegisterAction, RegisterActionImpl, SSOAction, SSOActionImpl}
 import com.lawsofnature.annotations.ApiMapping
 import com.lawsofnature.common.exception.ServiceException
 import com.lawsofnature.factory.ResponseFactory
 import com.lawsofnature.member.client.{MemberClientService, MemberClientServiceImpl}
-import com.lawsofnature.service.{MemberService, MemberServiceImpl}
+import com.lawsofnature.service.{MemberService, MemberServiceImpl, SessionService, SessionServiceImpl}
+import com.lawsofnature.sso.client.{SSOClientService, SSOClientServiceImpl}
 import com.typesafe.config.ConfigFactory
 import org.aopalliance.intercept.{MethodInterceptor, MethodInvocation}
 import org.slf4j.{Logger, LoggerFactory}
@@ -43,10 +44,14 @@ object HttpService extends App {
     override def configure() {
       val map: util.HashMap[String, String] = ConfigHelper.configMap
       Names.bindProperties(binder(), map)
+      println("aaaaaaaaaaaaaa:::::::::::" + map.get("ice.client.member.init.config"))
       bind(classOf[MemberService]).to(classOf[MemberServiceImpl]).asEagerSingleton()
+      bind(classOf[SessionService]).to(classOf[SessionServiceImpl]).asEagerSingleton()
       bind(classOf[IcePrxFactory]).to(classOf[IcePrxFactoryImpl]).asEagerSingleton()
       bind(classOf[MemberClientService]).to(classOf[MemberClientServiceImpl]).asEagerSingleton()
+      bind(classOf[SSOClientService]).to(classOf[SSOClientServiceImpl]).asEagerSingleton()
       bind(classOf[RegisterAction]).to(classOf[RegisterActionImpl]).asEagerSingleton()
+      bind(classOf[SSOAction]).to(classOf[SSOActionImpl]).asEagerSingleton()
       bindInterceptor(Matchers.any(), Matchers.annotatedWith(classOf[ApiMapping]), apiMethodInterceptor)
     }
   })
@@ -58,15 +63,18 @@ object HttpService extends App {
   val actionBeanClassList = new util.ArrayList[Class[_]]()
   while (iterator.hasNext) {
     val entry: Entry[Key[_], Binding[_]] = iterator.next()
+
     val clazz: Class[_ <: Key[_]] = entry.getKey.getClass
-    if (clazz.getPackage.getName.equalsIgnoreCase("com.lawsofnature.action")) {
-      actionBeanClassList.add(clazz)
+    val rawType: Class[_] = entry.getKey.getTypeLiteral.getRawType
+    if (rawType.getName.startsWith("com.lawsofnature.action")) {
+      actionBeanClassList.add(rawType)
     }
   }
   println(actionBeanClassList)
 
 
-  injector.getInstance(classOf[MemberClientService]).initClient
+//  injector.getInstance(classOf[MemberClientService]).initClient
+//  injector.getInstance(classOf[SSOClientService]).initClient
 
   implicit val system: ActorSystem = ActorSystem()
 
