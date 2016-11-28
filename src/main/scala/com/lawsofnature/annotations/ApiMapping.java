@@ -10,5 +10,10 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ExceptionInterceptor {
+public @interface ApiMapping {
+    int id() default -1;
+
+    boolean ignoreEDecrypt() default false;
+
+    boolean ignoreSession() default false;
 }

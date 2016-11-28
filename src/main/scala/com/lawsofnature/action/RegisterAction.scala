@@ -2,60 +2,78 @@ package com.lawsofnature.action
 
 import javax.inject.Inject
 
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server._
+import com.lawsofnature.annotations.ApiMapping
 import com.lawsofnature.common.exception.ServiceErrorCode
 import com.lawsofnature.enumeration.SuccessResponse
 import com.lawsofnature.factory.ResponseFactory
 import com.lawsofnature.request.{CheckIdentityRequest, RegisterRequest}
+import com.lawsofnature.response.ApiResponse
 import com.lawsofnature.service.MemberService
 import org.slf4j.{Logger, LoggerFactory}
+
+import scala.concurrent.{Future, Promise}
+import scala.util.Success
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by fangzhongwei on 2016/11/7.
   */
 trait RegisterAction {
-  def register(traceId: String, ip: String, registerRequest: RegisterRequest): Route
+  def register(traceId: String, ip: String, registerRequest: RegisterRequest): Future[ApiResponse]
 
-  def checkIdentity(traceId: String, checkIdentityRequest: CheckIdentityRequest): Route
+  def checkIdentity(traceId: String, ip: String, checkIdentityRequest: CheckIdentityRequest): Future[ApiResponse]
 }
 
 class RegisterActionImpl @Inject()(memberService: MemberService) extends RegisterAction {
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
-  def register(traceId: String, ip: String, registerRequest: RegisterRequest): Route = {
-    registerRequest.validate() match {
-      case Some(error) => ResponseFactory.serviceErrorResponse(error)
-      case None => onSuccess(memberService.register(traceId, ip, registerRequest)) {
-        case Some(response) =>
-          response.success match {
-            case true =>
-              ResponseFactory.successConstResponse(SuccessResponse.SUCCESS_REGISTER)
-            case false =>
-              ResponseFactory.serviceErrorResponse(ServiceErrorCode.get(response.code))
+  def register(traceId: String, ip: String, registerRequest: RegisterRequest): Future[ApiResponse] = {
+    val promise: Promise[ApiResponse] = Promise[ApiResponse]()
+    Future {
+      registerRequest.validate() match {
+        case Some(error) => ResponseFactory.serviceErrorResponse(error)
+        case None => (memberService.register(traceId, ip, registerRequest)) onComplete {
+          case Success(maybeBaseResponse) => maybeBaseResponse match {
+            case Some(response) =>
+              response.success match {
+                case true =>
+                  promise.success(ResponseFactory.successConstResponse(SuccessResponse.SUCCESS_REGISTER))
+                case false =>
+                  promise.success(ResponseFactory.serviceErrorResponse(ServiceErrorCode.get(response.code)))
+              }
+            case None =>
+              promise.success(ResponseFactory.commonErrorResponse())
           }
-        case None =>
-          ResponseFactory.commonErrorResponse()
+        }
       }
     }
+    promise.future
   }
 
-  override def checkIdentity(traceId: String, checkIdentityRequest: CheckIdentityRequest): Route = {
-    checkIdentityRequest.validate() match {
-      case Some(error) => ResponseFactory.serviceErrorResponse(error)
-      case None => onSuccess(memberService.checkIdentity(traceId, checkIdentityRequest)) {
-        case Some(response) =>
-          response.success match {
-            case true => checkIdentityRequest.pid match {
-              case 0 => ResponseFactory.serviceErrorResponse(ServiceErrorCode.EC_UC_USERNAME_TOKEN)
-              case 1 => ResponseFactory.serviceErrorResponse(ServiceErrorCode.EC_UC_MOBILE_TOKEN)
-              case 2 => ResponseFactory.serviceErrorResponse(ServiceErrorCode.EC_UC_EMAIL_TOKEN)
-            }
-            case false => ResponseFactory.successConstResponse(SuccessResponse.SUCCESS)
+  @ApiMapping(id = 1001, ignoreSession = true)
+  override def checkIdentity(traceId: String, ip: String, checkIdentityRequest: CheckIdentityRequest): Future[ApiResponse] = {
+    val promise: Promise[ApiResponse] = Promise[ApiResponse]()
+    Future {
+
+      checkIdentityRequest.validate() match {
+        case Some(error) => ResponseFactory.serviceErrorResponse(error)
+        case None => (memberService.checkIdentity(traceId, checkIdentityRequest)) onComplete {
+          case Success(baseResponse) => baseResponse match {
+            case Some(response) =>
+              response.success match {
+                case true => checkIdentityRequest.pid match {
+                  case 0 => promise.success(ResponseFactory.serviceErrorResponse(ServiceErrorCode.EC_UC_USERNAME_TOKEN))
+                  case 1 => promise.success(ResponseFactory.serviceErrorResponse(ServiceErrorCode.EC_UC_MOBILE_TOKEN))
+                  case 2 => promise.success(ResponseFactory.serviceErrorResponse(ServiceErrorCode.EC_UC_EMAIL_TOKEN))
+                }
+                case false => promise.success(ResponseFactory.successConstResponse(SuccessResponse.SUCCESS))
+              }
+            case None =>
+              promise.success(ResponseFactory.commonErrorResponse())
           }
-        case None =>
-          ResponseFactory.commonErrorResponse()
+        }
       }
     }
+    promise.future
   }
 }

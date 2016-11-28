@@ -8,6 +8,7 @@ import com.lawsofnature.request.{CheckIdentityRequest, RegisterRequest}
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.{Future, Promise}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by fangzhongwei on 2016/10/10.

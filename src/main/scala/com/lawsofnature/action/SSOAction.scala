@@ -2,31 +2,38 @@ package com.lawsofnature.action
 
 import javax.inject.Inject
 
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server._
 import com.lawsofnature.factory.ResponseFactory
-import com.lawsofnature.helper.Constant
 import com.lawsofnature.request.AppLoginRequest
 import com.lawsofnature.response.ApiResponse
 import com.lawsofnature.service.SessionService
+
+import scala.concurrent.{Future, Promise}
+import scala.util.Success
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by fangzhongwei on 2016/11/23.
   */
 trait SSOAction {
-  def login(traceId: String, ip: String, request: AppLoginRequest): Route
+  def login(traceId: String, ip: String, request: AppLoginRequest): Future[ApiResponse]
 }
 
 class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction {
-  override def login(traceId: String, ip: String, request: AppLoginRequest): Route = {
-    request.validate() match {
-      case Some(errorCode) => ResponseFactory.serviceErrorResponse(errorCode)
-      case None => onSuccess(sessionService.login(traceId, ip, request))  {
-        case Some(response) =>
-          ResponseFactory.response(new ApiResponse(0,"", response), Constant.defaultDesKey)
-        case None =>
-          ResponseFactory.commonErrorResponse()
+  override def login(traceId: String, ip: String, request: AppLoginRequest): Future[ApiResponse] = {
+    val promise: Promise[ApiResponse] = Promise[ApiResponse]()
+    Future {
+      request.validate() match {
+        case Some(errorCode) => ResponseFactory.serviceErrorResponse(errorCode)
+        case None => sessionService.login(traceId, ip, request) onComplete{
+          case Success(sessionResponse) => sessionResponse match {
+            case Some(response) =>
+              promise.success(new ApiResponse(0, "", response))
+            case None =>
+              promise.success(ResponseFactory.commonErrorResponse())
+          }
+        }
       }
     }
+    promise.future
   }
 }

@@ -14,7 +14,7 @@ object JsonHelper {
     mapper.writeValueAsString(anyRef)
   }
 
-  def read[T](json: String, c: Class[T]): T = {
-    mapper.readValue(json, c)
+  def read(json: String, c: Class[_]): AnyRef = {
+    mapper.readValue(json, c).asInstanceOf[AnyRef]
   }
 }
