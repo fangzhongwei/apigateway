@@ -2,14 +2,46 @@ name := """apigateway"""
 
 version := "1.0"
 
-scalaVersion := "2.12.0"
+//scalaVersion := "2.12.0"
+scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "5.1.36",
   "com.typesafe.akka" % "akka-actor_2.11" % "2.4.14",
 
-  //                      "com.typesafe.akka"    %%    "akka-http-spray-json-experimental"    % "2.4.14",
-//  "com.typesafe.akka" %% "akka-http-jackson" % "10.0.0",
+
+
+  "com.typesafe.akka" % "akka-agent_2.11" % "2.4.14",
+  "com.typesafe.akka" %% "akka-actor" % "2.4.14",
+  "com.typesafe.akka" %% "akka-agent" % "2.4.14",
+  "com.typesafe.akka" %% "akka-camel" % "2.4.14",
+  "com.typesafe.akka" %% "akka-cluster" % "2.4.14",
+  "com.typesafe.akka" %% "akka-cluster-metrics" % "2.4.14",
+  "com.typesafe.akka" %% "akka-cluster-sharding" % "2.4.14",
+  "com.typesafe.akka" %% "akka-cluster-tools" % "2.4.14",
+  "com.typesafe.akka" %% "akka-contrib" % "2.4.14",
+  "com.typesafe.akka" %% "akka-multi-node-testkit" % "2.4.14",
+  "com.typesafe.akka" %% "akka-osgi" % "2.4.14",
+  "com.typesafe.akka" %% "akka-persistence" % "2.4.14",
+  "com.typesafe.akka" %% "akka-persistence-tck" % "2.4.14",
+  "com.typesafe.akka" %% "akka-remote" % "2.4.14",
+  "com.typesafe.akka" %% "akka-slf4j" % "2.4.14",
+  "com.typesafe.akka" %% "akka-stream" % "2.4.14",
+  "com.typesafe.akka" %% "akka-stream-testkit" % "2.4.14",
+  "com.typesafe.akka" %% "akka-testkit" % "2.4.14",
+  "com.typesafe.akka" %% "akka-distributed-data-experimental" % "2.4.14",
+  "com.typesafe.akka" %% "akka-typed-experimental" % "2.4.14",
+  "com.typesafe.akka" %% "akka-persistence-query-experimental" % "2.4.14",
+
+
+  "com.typesafe.akka" %% "akka-http-core" % "10.0.0",
+"com.typesafe.akka" %% "akka-http" % "10.0.0",
+"com.typesafe.akka" %% "akka-http-testkit" % "10.0.0",
+"com.typesafe.akka" %% "akka-http-spray-json" % "10.0.0",
+"com.typesafe.akka" %% "akka-http-jackson" % "10.0.0",
+"com.typesafe.akka" %% "akka-http-xml" % "10.0.0",
+
+
   "com.typesafe.akka" % "akka-stream_2.11" % "2.4.14",
   "com.typesafe.akka" % "akka-http-core_2.11" % "10.0.0",
   "com.typesafe.akka" % "akka-http_2.11" % "10.0.0",
@@ -35,5 +67,5 @@ libraryDependencies += "com.fasterxml.jackson.module" % "jackson-module-scala_2.
 libraryDependencies += "commons-lang" % "commons-lang" % "2.6"
 
 // https://mvnrepository.com/artifact/org.scala-lang/scala-library
-libraryDependencies += "org.scala-lang" % "scala-library" % "2.12.0"
+//libraryDependencies += "org.scala-lang" % "scala-library" % "2.12.0"
 

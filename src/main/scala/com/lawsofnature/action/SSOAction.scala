@@ -2,6 +2,7 @@ package com.lawsofnature.action
 
 import javax.inject.Inject
 
+import com.lawsofnature.annotations.ApiMapping
 import com.lawsofnature.factory.ResponseFactory
 import com.lawsofnature.request.AppLoginRequest
 import com.lawsofnature.response.ApiResponse
@@ -19,6 +20,8 @@ trait SSOAction {
 }
 
 class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction {
+
+  @ApiMapping(id = 2001, ignoreSession = true)
   override def login(traceId: String, ip: String, request: AppLoginRequest): Future[ApiResponse] = {
     val promise: Promise[ApiResponse] = Promise[ApiResponse]()
     Future {

@@ -12,8 +12,10 @@ import com.lawsofnature.helper.JsonHelper
 import com.lawsofnature.response.ApiResponse
 import com.lawsofnature.server.HttpService
 
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{Await, Future, Promise}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 /**
   * Created by fangzhongwei on 2016/11/28.
@@ -38,9 +40,10 @@ object ActionInvoker {
       }
     }
   }
+  implicit val timeout = (90 seconds)
 
-  def invoke(actionId: Int, ip: String, traceId: String, body: String, salt: String): Future[Route] = {
-    val promise: Promise[Route] with Object = Promise[Route]()
+  def invoke(actionId: Int, ip: String, traceId: String, body: String, salt: String): Future[String] = {
+    val promise: Promise[String] with Object = Promise[String]()
     Future {
 
       val maybeTuple: Option[(Method, Class[_], ApiMapping)] = apiMap.get(actionId)
@@ -49,9 +52,12 @@ object ActionInvoker {
           val method: Method = tuple._1
           val parseClass: Class[_] = tuple._2
           val apiMapping: ApiMapping = tuple._3
-          val response: ApiResponse = method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), traceId, ip, JsonHelper.read(DESUtils.decrypt(body, salt), parseClass)).asInstanceOf[ApiResponse]
-          promise.success(complete(DESUtils.encrypt(JsonHelper.writeValueAsString(response), salt)))
-        case None => throw new ServiceException(ServiceErrorCode.EC_SYSTEM_ERROR)
+          val response: Future[ApiResponse] = method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), traceId, ip, JsonHelper.read(DESUtils.decrypt(body, salt), parseClass)).asInstanceOf[Future[ApiResponse]]
+
+          val result: ApiResponse = Await.result(response, timeout)
+
+          promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(result), salt))
+        case None => promise.failure(new ServiceException(ServiceErrorCode.EC_SYSTEM_ERROR))
       }
     }
     promise.future

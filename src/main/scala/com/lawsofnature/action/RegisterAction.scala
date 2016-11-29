@@ -12,7 +12,7 @@ import com.lawsofnature.service.MemberService
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.{Future, Promise}
-import scala.util.Success
+import scala.util.{Failure, Success}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -27,6 +27,7 @@ trait RegisterAction {
 class RegisterActionImpl @Inject()(memberService: MemberService) extends RegisterAction {
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
+  @ApiMapping(id = 1002, ignoreSession = true)
   def register(traceId: String, ip: String, registerRequest: RegisterRequest): Future[ApiResponse] = {
     val promise: Promise[ApiResponse] = Promise[ApiResponse]()
     Future {
@@ -61,16 +62,23 @@ class RegisterActionImpl @Inject()(memberService: MemberService) extends Registe
           case Success(baseResponse) => baseResponse match {
             case Some(response) =>
               response.success match {
-                case true => checkIdentityRequest.pid match {
+                case true =>
+                  logger.info("already exists")
+                  checkIdentityRequest.pid match {
                   case 0 => promise.success(ResponseFactory.serviceErrorResponse(ServiceErrorCode.EC_UC_USERNAME_TOKEN))
                   case 1 => promise.success(ResponseFactory.serviceErrorResponse(ServiceErrorCode.EC_UC_MOBILE_TOKEN))
                   case 2 => promise.success(ResponseFactory.serviceErrorResponse(ServiceErrorCode.EC_UC_EMAIL_TOKEN))
                 }
-                case false => promise.success(ResponseFactory.successConstResponse(SuccessResponse.SUCCESS))
+                case false =>
+                  logger.info("no exists")
+                  promise.success(ResponseFactory.successConstResponse(SuccessResponse.SUCCESS))
               }
             case None =>
               promise.success(ResponseFactory.commonErrorResponse())
           }
+          case Failure(ex) =>
+            logger.error(traceId, ex)
+            promise.failure(ex)
         }
       }
     }

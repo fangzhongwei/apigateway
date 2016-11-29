@@ -1,5 +1,6 @@
 package com.lawsofnature.server
 
+import java.lang.reflect.Type
 import java.util
 import java.util.Map.Entry
 
@@ -8,8 +9,10 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.ExceptionHandler
 import akka.stream.ActorMaterializer
+import com.google.inject.internal.LinkedBindingImpl
 import com.google.inject.matcher.Matchers
 import com.google.inject.name.Names
+import com.google.inject.spi.LinkedKeyBinding
 import com.google.inject.{AbstractModule, Binding, Guice, Key}
 import com.lawsofnatrue.common.ice.{ConfigHelper, IcePrxFactory, IcePrxFactoryImpl}
 import com.lawsofnature.action.{RegisterAction, RegisterActionImpl, SSOAction, SSOActionImpl}
@@ -44,7 +47,9 @@ object HttpService extends App {
     override def configure() {
       val map: util.HashMap[String, String] = ConfigHelper.configMap
       Names.bindProperties(binder(), map)
-      println("aaaaaaaaaaaaaa:::::::::::" + map.get("ice.client.member.init.config"))
+      println("aaaaaaaaaaaaaa:::::::::::" + map.get("member.ice.client.init.config"))
+      println("aaaaaaaaaaaaaa:::::::::::" + map.get("http.host"))
+      println("aaaaaaaaaaaaaa:::::::::::" + map.get("http.port"))
       bind(classOf[MemberService]).to(classOf[MemberServiceImpl]).asEagerSingleton()
       bind(classOf[SessionService]).to(classOf[SessionServiceImpl]).asEagerSingleton()
       bind(classOf[IcePrxFactory]).to(classOf[IcePrxFactoryImpl]).asEagerSingleton()
@@ -67,19 +72,22 @@ object HttpService extends App {
     val clazz: Class[_ <: Key[_]] = entry.getKey.getClass
     val rawType: Class[_] = entry.getKey.getTypeLiteral.getRawType
     if (rawType.getName.startsWith("com.lawsofnature.action")) {
-      actionBeanClassList.add(rawType)
+      val value1: LinkedBindingImpl[_] = entry.getValue.asInstanceOf[LinkedBindingImpl[_]]
+
+      println(value1.getLinkedKey)
+      val rawType1: Class[_] = value1.getLinkedKey.getTypeLiteral.getRawType
+      println(rawType1)
+      actionBeanClassList.add(rawType1)
     }
   }
   println(actionBeanClassList)
 
 
-//  injector.getInstance(classOf[MemberClientService]).initClient
-//  injector.getInstance(classOf[SSOClientService]).initClient
+  injector.getInstance(classOf[MemberClientService]).initClient
+  injector.getInstance(classOf[SSOClientService]).initClient
 
-  implicit val system: ActorSystem = ActorSystem()
-
+  implicit val system: ActorSystem = ActorSystem("my-system")
   implicit val materializer = ActorMaterializer()
-
   implicit val dispatcher = system.dispatcher
 
   val host: String = conf.getString("http.host")

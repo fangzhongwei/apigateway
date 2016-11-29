@@ -40,7 +40,7 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
   }
 
   val apigatewayRoutes =
-    (path("v1.0/route") & post) {
+    (path("v1.0-route") & post) {
       headerValueByName(HEADER_IP) {
         ip =>
           headerValueByName(HEADER_TRACE_ID) {
@@ -52,7 +52,8 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
                       entity(as[String]) {
                         body => {
                           onSuccess(doRoute(ip, traceId, actionId.toInt, token, body)) {
-                            case route => route
+                            case result =>
+                              complete(result)
                           }
                         }
                       }
@@ -65,7 +66,7 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
       complete("internal error")
     }
 
-  def doRoute(ip: String, traceId: String, actionId: Int, token: String, body: String): Future[Route] = {
+  def doRoute(ip: String, traceId: String, actionId: Int, token: String, body: String): Future[String] = {
     try {
       var salt: String = Constant.defaultDesKey
       if (actionId >= 2002)
