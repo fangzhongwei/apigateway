@@ -1,6 +1,6 @@
 package com.lawsofnature.server
 
-import java.lang.reflect.Type
+import java.lang.reflect.Method
 import java.util
 import java.util.Map.Entry
 
@@ -12,13 +12,11 @@ import akka.stream.ActorMaterializer
 import com.google.inject.internal.LinkedBindingImpl
 import com.google.inject.matcher.Matchers
 import com.google.inject.name.Names
-import com.google.inject.spi.LinkedKeyBinding
 import com.google.inject.{AbstractModule, Binding, Guice, Key}
 import com.lawsofnatrue.common.ice.{ConfigHelper, IcePrxFactory, IcePrxFactoryImpl}
 import com.lawsofnature.action.{RegisterAction, RegisterActionImpl, SSOAction, SSOActionImpl}
 import com.lawsofnature.annotations.ApiMapping
 import com.lawsofnature.common.exception.ServiceException
-import com.lawsofnature.factory.ResponseFactory
 import com.lawsofnature.member.client.{MemberClientService, MemberClientServiceImpl}
 import com.lawsofnature.service.{MemberService, MemberServiceImpl, SessionService, SessionServiceImpl}
 import com.lawsofnature.sso.client.{SSOClientService, SSOClientServiceImpl}
@@ -33,23 +31,26 @@ object HttpService extends App {
 
   var apiMethodInterceptor = new MethodInterceptor {
     override def invoke(methodInvocation: MethodInvocation): AnyRef = {
+      val millis: Long = System.currentTimeMillis()
+      var name: String = null
       var proceed: AnyRef = new AnyRef
       try {
+        val method1: Method = methodInvocation.getMethod
+        name = method1.getDeclaringClass.toString + ":" + method1.getName
         proceed = methodInvocation.proceed()
       } catch {
-        case e: Exception => ""
+        case e: Exception => logger.error("system", e)
+          ""
       }
+      logger.info("Call method " + name + " cost " + (System.currentTimeMillis() - millis))
       proceed
     }
   }
 
-   val injector = Guice.createInjector(new AbstractModule() {
+  val injector = Guice.createInjector(new AbstractModule() {
     override def configure() {
       val map: util.HashMap[String, String] = ConfigHelper.configMap
       Names.bindProperties(binder(), map)
-      println("aaaaaaaaaaaaaa:::::::::::" + map.get("member.ice.client.init.config"))
-      println("aaaaaaaaaaaaaa:::::::::::" + map.get("http.host"))
-      println("aaaaaaaaaaaaaa:::::::::::" + map.get("http.port"))
       bind(classOf[MemberService]).to(classOf[MemberServiceImpl]).asEagerSingleton()
       bind(classOf[SessionService]).to(classOf[SessionServiceImpl]).asEagerSingleton()
       bind(classOf[IcePrxFactory]).to(classOf[IcePrxFactoryImpl]).asEagerSingleton()
@@ -57,7 +58,8 @@ object HttpService extends App {
       bind(classOf[SSOClientService]).to(classOf[SSOClientServiceImpl]).asEagerSingleton()
       bind(classOf[RegisterAction]).to(classOf[RegisterActionImpl]).asEagerSingleton()
       bind(classOf[SSOAction]).to(classOf[SSOActionImpl]).asEagerSingleton()
-      bindInterceptor(Matchers.any(), Matchers.annotatedWith(classOf[ApiMapping]), apiMethodInterceptor)
+//      bindInterceptor(Matchers.any(), Matchers.annotatedWith(classOf[ApiMapping]), apiMethodInterceptor)
+      bindInterceptor(Matchers.any(), Matchers.any(), apiMethodInterceptor)
     }
   })
 
@@ -98,13 +100,13 @@ object HttpService extends App {
     case ex: ServiceException =>
       logger.error("ServiceException", ex)
       println("ServiceExceptionServiceExceptionServiceException")
-//      ResponseFactory.serviceErrorResponse(ex.serviceErrorCode)
+      //      ResponseFactory.serviceErrorResponse(ex.serviceErrorCode)
       complete("internal error")
     case ex: Exception =>
       logger.error("internal Exception", ex)
       extractUri { uri =>
         println(s"Request to $uri could not be handled normally")
-//        ResponseFactory.commonErrorResponse()
+        //        ResponseFactory.commonErrorResponse()
         complete("internal error")
       }
   }

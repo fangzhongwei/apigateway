@@ -2,13 +2,14 @@ package com.lawsofnature.service
 
 import javax.inject.Inject
 
-import RpcMember.{BaseResponse, MemberRegisterRequest, MemberResponse}
+import RpcMember.{BaseResponse, MemberIdentityExistsResponse, MemberRegisterRequest, MemberResponse}
+import com.lawsofnature.common.exception.{ServiceErrorCode, ServiceException}
 import com.lawsofnature.member.client.MemberClientService
 import com.lawsofnature.request.{CheckIdentityRequest, RegisterRequest}
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.{Future, Promise}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Future, Promise}
 
 /**
   * Created by fangzhongwei on 2016/10/10.
@@ -16,7 +17,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 trait MemberService {
   def register(traceId: String, ip: String, registerRequest: RegisterRequest): Future[Option[BaseResponse]]
 
-  def checkIdentity(traceId: String, checkIdentityRequest: CheckIdentityRequest): Future[Option[MemberResponse]]
+  def getMemberByIdentity(traceId: String, checkIdentityRequest: CheckIdentityRequest): Future[Option[MemberResponse]]
+
+  def isMemberIdentityExists(traceId: String, identity: String): Future[Option[Boolean]]
 }
 
 class MemberServiceImpl @Inject()(memberClient: MemberClientService) extends MemberService {
@@ -31,10 +34,24 @@ class MemberServiceImpl @Inject()(memberClient: MemberClientService) extends Mem
     response.future
   }
 
-  override def checkIdentity(traceId: String, checkIdentityRequest: CheckIdentityRequest): Future[Option[MemberResponse]] = {
+  override def getMemberByIdentity(traceId: String, checkIdentityRequest: CheckIdentityRequest): Future[Option[MemberResponse]] = {
     val response = Promise[Option[MemberResponse]]()
     Future {
       response.success(Some(memberClient.getMemberByIdentity(traceId, checkIdentityRequest.i)))
+    }
+    response.future
+  }
+
+  override def isMemberIdentityExists(traceId: String, identity: String): Future[Option[Boolean]] = {
+    val response = Promise[Option[Boolean]]()
+    Future {
+      val memberIdentityExistsResponse: MemberIdentityExistsResponse = memberClient.isMemberIdentityExists(traceId, identity)
+      memberIdentityExistsResponse.success match {
+        case true =>
+          response.success(Some(memberIdentityExistsResponse.exists))
+        case false =>
+          response.failure(new ServiceException(ServiceErrorCode.get(memberIdentityExistsResponse.code)))
+      }
     }
     response.future
   }

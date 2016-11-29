@@ -58,19 +58,20 @@ class RegisterActionImpl @Inject()(memberService: MemberService) extends Registe
 
       checkIdentityRequest.validate() match {
         case Some(error) => ResponseFactory.serviceErrorResponse(error)
-        case None => (memberService.checkIdentity(traceId, checkIdentityRequest)) onComplete {
-          case Success(baseResponse) => baseResponse match {
-            case Some(response) =>
-              response.success match {
+        case None =>
+          val millis: Long = System.currentTimeMillis()
+          (memberService.isMemberIdentityExists(traceId, checkIdentityRequest.i)) onComplete {
+          case Success(memberIdentityExistsResponse) => memberIdentityExistsResponse match {
+            case Some(exists) =>
+              logger.info(traceId + " remote call checkIdentity cost:" + (System.currentTimeMillis() - millis))
+              exists match {
                 case true =>
-                  logger.info("already exists")
                   checkIdentityRequest.pid match {
                   case 0 => promise.success(ResponseFactory.serviceErrorResponse(ServiceErrorCode.EC_UC_USERNAME_TOKEN))
                   case 1 => promise.success(ResponseFactory.serviceErrorResponse(ServiceErrorCode.EC_UC_MOBILE_TOKEN))
                   case 2 => promise.success(ResponseFactory.serviceErrorResponse(ServiceErrorCode.EC_UC_EMAIL_TOKEN))
                 }
                 case false =>
-                  logger.info("no exists")
                   promise.success(ResponseFactory.successConstResponse(SuccessResponse.SUCCESS))
               }
             case None =>

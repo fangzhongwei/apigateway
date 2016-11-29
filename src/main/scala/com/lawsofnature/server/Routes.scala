@@ -41,6 +41,7 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
 
   val apigatewayRoutes =
     (path("v1.0-route") & post) {
+      val millis: Long = System.currentTimeMillis()
       headerValueByName(HEADER_IP) {
         ip =>
           headerValueByName(HEADER_TRACE_ID) {
@@ -53,6 +54,7 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
                         body => {
                           onSuccess(doRoute(ip, traceId, actionId.toInt, token, body)) {
                             case result =>
+                              println("api " + (System.currentTimeMillis() - millis))
                               complete(result)
                           }
                         }
