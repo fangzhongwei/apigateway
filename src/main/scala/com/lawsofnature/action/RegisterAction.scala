@@ -32,7 +32,7 @@ class RegisterActionImpl @Inject()(memberService: MemberService) extends Registe
     val promise: Promise[ApiResponse] = Promise[ApiResponse]()
     Future {
       registerRequest.validate() match {
-        case Some(error) => ResponseFactory.serviceErrorResponse(error)
+        case Some(error) => promise.success(ResponseFactory.serviceErrorResponse(error))
         case None => (memberService.register(traceId, ip, registerRequest)) onComplete {
           case Success(maybeBaseResponse) => maybeBaseResponse match {
             case Some(response) =>
@@ -55,9 +55,8 @@ class RegisterActionImpl @Inject()(memberService: MemberService) extends Registe
   override def checkIdentity(traceId: String, ip: String, checkIdentityRequest: CheckIdentityRequest): Future[ApiResponse] = {
     val promise: Promise[ApiResponse] = Promise[ApiResponse]()
     Future {
-
       checkIdentityRequest.validate() match {
-        case Some(error) => ResponseFactory.serviceErrorResponse(error)
+        case Some(error) => promise.success(ResponseFactory.serviceErrorResponse(error))
         case None =>
           val millis: Long = System.currentTimeMillis()
           (memberService.isMemberIdentityExists(traceId, checkIdentityRequest.i)) onComplete {

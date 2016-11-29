@@ -54,7 +54,7 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
                         body => {
                           onSuccess(doRoute(ip, traceId, actionId.toInt, token, body)) {
                             case result =>
-                              println("api " + (System.currentTimeMillis() - millis))
+                              println("call service cost : " + (System.currentTimeMillis() - millis))
                               complete(result)
                           }
                         }
@@ -82,12 +82,7 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
             }
           case None => throw new ServiceException(ServiceErrorCode.EC_SSO_SESSION_EXPIRED)
         }
-      //      actionId match {
-      //        case 1001 => registerAction.checkIdentity(traceId, ip, JsonHelper.read[CheckIdentityRequest](DESUtils.decrypt(body, salt), classOf[CheckIdentityRequest]))
-      //        case 1002 => registerAction.register(traceId, ip, JsonHelper.read[RegisterRequest](DESUtils.decrypt(body, salt), classOf[RegisterRequest]))
-      //        case 2001 => ssoAction.login(traceId, ip, JsonHelper.read[AppLoginRequest](DESUtils.decrypt(body, salt), classOf[AppLoginRequest]))
-      //        case _ => complete(BLANK)
-      //      }
+
       ActionInvoker.invoke(actionId, ip, traceId, body, salt)
     } finally {
 

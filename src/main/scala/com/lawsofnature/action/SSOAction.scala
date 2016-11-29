@@ -26,7 +26,7 @@ class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction 
     val promise: Promise[ApiResponse] = Promise[ApiResponse]()
     Future {
       request.validate() match {
-        case Some(errorCode) => ResponseFactory.serviceErrorResponse(errorCode)
+        case Some(errorCode) => promise.success(ResponseFactory.serviceErrorResponse(errorCode))
         case None => sessionService.login(traceId, ip, request) onComplete{
           case Success(sessionResponse) => sessionResponse match {
             case Some(response) =>
