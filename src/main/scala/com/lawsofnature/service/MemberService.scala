@@ -25,11 +25,11 @@ trait MemberService {
 class MemberServiceImpl @Inject()(memberClient: MemberClientService) extends MemberService {
   val logger = LoggerFactory.getLogger(this.getClass)
 
-  override def register(traceId: String, ip: String, registerRequest: RegisterRequest): Future[Option[BaseResponse]] = {
+  override def register(traceId: String, ip: String, request: RegisterRequest): Future[Option[BaseResponse]] = {
     val response = Promise[Option[BaseResponse]]()
     Future {
-      logger.info("register request: {}", registerRequest)
-      response.success(Some(memberClient.register(traceId, new MemberRegisterRequest(ip, registerRequest.lat, registerRequest.lng, registerRequest.dt, registerRequest.di, registerRequest.un, registerRequest.pid, registerRequest.i, registerRequest.pwd))))
+      logger.info("register request: {}", request)
+      response.success(Some(memberClient.register(traceId, new MemberRegisterRequest(ip, request.lat, request.lng, request.dt, request.di, request.un, request.pid, request.i, request.pwd,request.ctry, request.pro, request.c, request.cty, request.addr))))
     }
     response.future
   }
