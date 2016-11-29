@@ -3,7 +3,7 @@ package com.lawsofnature.apigateway.service
 import javax.inject.Inject
 
 import RpcMember.{BaseResponse, MemberIdentityExistsResponse, MemberRegisterRequest, MemberResponse}
-import com.lawsofnature.common.exception.{ServiceErrorCode, ServiceException}
+import com.lawsofnature.common.exception.{ErrorCode, ServiceException}
 import com.lawsofnature.member.client.MemberClientService
 import com.lawsofnature.apigateway.request.{CheckIdentityRequest, RegisterRequest}
 import org.slf4j.LoggerFactory
@@ -50,7 +50,7 @@ class MemberServiceImpl @Inject()(memberClient: MemberClientService) extends Mem
         case true =>
           response.success(Some(memberIdentityExistsResponse.exists))
         case false =>
-          response.failure(ServiceException.make(ServiceErrorCode.get(memberIdentityExistsResponse.code)))
+          response.failure(ServiceException.make(ErrorCode.get(memberIdentityExistsResponse.code)))
       }
     }
     response.future

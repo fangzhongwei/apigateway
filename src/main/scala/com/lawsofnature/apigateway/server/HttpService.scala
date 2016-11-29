@@ -75,17 +75,12 @@ object HttpService extends App {
 
     val clazz: Class[_ <: Key[_]] = entry.getKey.getClass
     val rawType: Class[_] = entry.getKey.getTypeLiteral.getRawType
-    if (rawType.getName.startsWith("com.lawsofnature.action")) {
+    if (rawType.getName.startsWith("com.lawsofnature.apigateway.action")) {
       val value1: LinkedBindingImpl[_] = entry.getValue.asInstanceOf[LinkedBindingImpl[_]]
-
-      println(value1.getLinkedKey)
       val rawType1: Class[_] = value1.getLinkedKey.getTypeLiteral.getRawType
-      println(rawType1)
       actionBeanClassList.add(rawType1)
     }
   }
-  println(actionBeanClassList)
-
 
   injector.getInstance(classOf[MemberClientService]).initClient
   injector.getInstance(classOf[SSOClientService]).initClient
@@ -101,13 +96,13 @@ object HttpService extends App {
   implicit def myExceptionHandler: ExceptionHandler = ExceptionHandler {
     case ex: ServiceException =>
       logger.error("ServiceException", ex)
-      println("ServiceExceptionServiceExceptionServiceException")
-      //      ResponseFactory.serviceErrorResponse(ex.serviceErrorCode)
+      logger.error("ServiceExceptionServiceExceptionServiceException")
+      //      ResponseFactory.serviceErrorResponse(ex.ErrorCode)
       complete("internal error")
     case ex: Exception =>
       logger.error("internal Exception", ex)
       extractUri { uri =>
-        println(s"Request to $uri could not be handled normally")
+        logger.error(s"Request to $uri could not be handled normally")
         //        ResponseFactory.commonErrorResponse()
         complete("internal error")
       }

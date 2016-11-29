@@ -1,7 +1,8 @@
 package com.lawsofnature.apigateway.request
 
-import com.lawsofnature.apigateway.helper.RegHelper
-import com.lawsofnature.common.exception.ServiceErrorCode._
+import com.lawsofnature.common.exception.ErrorCode
+import com.lawsofnature.common.exception.ErrorCode._
+import com.lawsofnature.common.helper.RegHelper
 import org.apache.commons.lang.StringUtils
 
 /**
@@ -16,9 +17,25 @@ import org.apache.commons.lang.StringUtils
   * pwd password
   * Created by fangzhongwei on 2016/10/10.
   */
-case class RegisterRequest( lat: String, lng: String, ctry: String, pro: String, c: String, cty: String, addr: String, dt: Int, di: String, un: String, pid: Int, i: String, pwd: String) {
-  def validate(): Option[ServiceErrorCode] = {
-    var error: Option[ServiceErrorCode] = None
+case class RegisterRequest(lat: String, lng: String, ctry: String, pro: String, c: String, cty: String, addr: String, dt: Int, di: String, un: String, pid: Int, i: String, pwd: String) {
+
+
+  //  var lat: String = _
+  //  var lng: String = _
+  //  var ctry: String = _
+  //  var pro: String = _
+  //  var c: String = _
+  //  var cty: String = _
+  //  var addr: String = _
+  //  var dt: Int = _
+  //  var di: String = _
+  //  var un: String = _
+  //  var pid: Int = _
+  //  var i: String = _
+  //  var pwd: String = _
+
+  def validate(): Option[ErrorCode] = {
+    var error: Option[ErrorCode] = None
     if (StringUtils.isBlank(lat)) {
       error = Some(EC_INVALID_REQUEST)
     } else if (StringUtils.isBlank(lng)) {

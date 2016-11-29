@@ -7,7 +7,7 @@ import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import com.lawsofnature.apigateway.action.RegisterAction
 import com.lawsofnature.apigateway.action.{RegisterAction, SSOAction}
 import com.lawsofnature.apigateway.invoker.ActionInvoker
-import com.lawsofnature.common.exception.{ServiceErrorCode, ServiceException}
+import com.lawsofnature.common.exception.{ErrorCode, ServiceException}
 import com.lawsofnature.apigateway.factory.ResponseFactory
 import com.lawsofnature.apigateway.helper.Constant
 import com.lawsofnature.apigateway.service.SessionService
@@ -79,9 +79,9 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
               case true =>
                 salt = sessionResponse.salt
               case false =>
-                throw ServiceException.make(ServiceErrorCode.get(sessionResponse.code))
+                throw ServiceException.make(ErrorCode.get(sessionResponse.code))
             }
-          case None => throw ServiceException.make(ServiceErrorCode.EC_SSO_SESSION_EXPIRED)
+          case None => throw ServiceException.make(ErrorCode.EC_SSO_SESSION_EXPIRED)
         }
 
       ActionInvoker.invoke(actionId, ip, traceId, body, salt)

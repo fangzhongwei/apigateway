@@ -1,6 +1,7 @@
 package com.lawsofnature.apigateway.request
 
-import com.lawsofnature.common.exception.ServiceErrorCode._
+import com.lawsofnature.common.exception.ErrorCode
+import com.lawsofnature.common.exception.ErrorCode._
 import org.apache.commons.lang.StringUtils
 
 /**
@@ -20,8 +21,8 @@ import org.apache.commons.lang.StringUtils
   * Created by fangzhongwei on 2016/11/23.
   */
 case class AppLoginRequest(ti: String, ci:Int, dt: Int, di: String, lat: String, lng: String, ctry: String, pro: String, c: String, cty: String, addr: String, i: String, pwd: String) {
-  def validate(): Option[ServiceErrorCode] = {
-    var error: Option[ServiceErrorCode] = None
+  def validate(): Option[ErrorCode] = {
+    var error: Option[ErrorCode] = None
     if (StringUtils.isBlank(ti)) {
       error = Some(EC_INVALID_REQUEST)
     } else if (StringUtils.isBlank(lat)) {

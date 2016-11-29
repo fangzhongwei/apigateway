@@ -4,20 +4,23 @@ import java.lang.reflect.Method
 import java.util
 
 import com.lawsofnature.apigateway.annotations.ApiMapping
-import com.lawsofnature.apigateway.helper.JsonHelper
 import com.lawsofnature.apigateway.server.HttpService
 import com.lawsofnature.common.edecrypt.DESUtils
-import com.lawsofnature.common.exception.{ServiceErrorCode, ServiceException}
+import com.lawsofnature.common.exception.{ErrorCode, ServiceException}
 import com.lawsofnature.apigateway.response.ApiResponse
+import com.lawsofnature.apigateway.validate.Validator
+import com.lawsofnature.common.helper.JsonHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future, Promise}
+import scala.util.{Failure, Success}
 
 /**
   * Created by fangzhongwei on 2016/11/28.
   */
 object ActionInvoker {
+  val EMPTY: String = ""
 
   private val classList: util.ArrayList[Class[_]] = HttpService.actionBeanClassList
 
@@ -48,10 +51,23 @@ object ActionInvoker {
           val method: Method = tuple._1
           val parseClass: Class[_] = tuple._2
           val apiMapping: ApiMapping = tuple._3
-          val response: Future[ApiResponse] = method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), traceId, ip, JsonHelper.read(DESUtils.decrypt(body, salt), parseClass)).asInstanceOf[Future[ApiResponse]]
-          val result: ApiResponse = Await.result(response, timeout)
-          promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(result), salt))
-        case None => promise.failure(ServiceException.make(ServiceErrorCode.EC_SYSTEM_ERROR))
+          val request: AnyRef = JsonHelper.read(DESUtils.decrypt(body, salt), parseClass)
+
+          Validator.validate(request) match {
+            case Some(errorCode) => promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(new ApiResponse(errorCode.getCode, EMPTY)), salt))
+            case None =>
+              val response: Future[ApiResponse] = method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), traceId, ip, request).asInstanceOf[Future[ApiResponse]]
+              response onComplete {
+                case Success(response) => promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(response), salt))
+                case Failure(ex) =>
+                  ex match {
+                    case e:ServiceException =>
+                      promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(new ApiResponse(e.getErrorCode.getCode, EMPTY)), salt))
+                    case _ => promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(new ApiResponse(ErrorCode.EC_SYSTEM_ERROR.getCode, EMPTY)), salt))
+                  }
+              }
+          }
+        case None => promise.failure(ServiceException.make(ErrorCode.EC_SYSTEM_ERROR))
       }
     }
     promise.future

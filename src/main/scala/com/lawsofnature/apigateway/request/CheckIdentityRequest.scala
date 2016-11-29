@@ -1,8 +1,7 @@
 package com.lawsofnature.apigateway.request
 
-import com.lawsofnature.apigateway.helper.RegHelper
-import com.lawsofnature.common.exception.ServiceErrorCode._
-import org.apache.commons.lang.StringUtils
+import com.lawsofnature.apigateway.annotations.FieldValidate
+import com.lawsofnature.common.exception.ErrorCode._
 
 /**
   * ti trace id
@@ -10,20 +9,10 @@ import org.apache.commons.lang.StringUtils
   * pid pid
   * Created by fangzhongwei on 2016/11/22.
   */
-case class CheckIdentityRequest(i: String, pid: Int) {
-  def validate(): Option[ServiceErrorCode] = {
-    var error: Option[ServiceErrorCode] = None
-    if (StringUtils.isBlank(i)) {
-      error = Some(EC_INVALID_REQUEST)
-    } else if (1 != pid && 2 != pid) {
-      error = Some(EC_INVALID_REQUEST)
-    } else if (1 == pid && !RegHelper.isMobile(i)) {
-      error = Some(EC_UC_INVALID_MOBILE)
-    } else if (2 == pid && !RegHelper.isEmail(i)) {
-      error = Some(EC_UC_INVALID_EMAIL)
-    } else if (2 == pid && i.length > 64) {
-      error = Some(EC_UC_EMAIL_LENGTH_LIMIT)
-    }
-    error
-  }
+case class CheckIdentityRequest(@FieldValidate(required = true, maxLength = 128, error = EC_INVALID_REQUEST)
+                               var i: String,
+                                @FieldValidate(required = true, min = 0, max = 2, error = EC_UC_INVALID_EMAIL)
+                               var pid: Int) {
+  @FieldValidate(required = true, maxLength = 128, error = EC_UC_INVALID_MOBILE)
+  var haha:String = ""
 }
