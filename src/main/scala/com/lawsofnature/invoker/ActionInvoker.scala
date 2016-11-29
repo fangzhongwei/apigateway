@@ -53,9 +53,7 @@ object ActionInvoker {
           val parseClass: Class[_] = tuple._2
           val apiMapping: ApiMapping = tuple._3
           val response: Future[ApiResponse] = method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), traceId, ip, JsonHelper.read(DESUtils.decrypt(body, salt), parseClass)).asInstanceOf[Future[ApiResponse]]
-
           val result: ApiResponse = Await.result(response, timeout)
-
           promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(result), salt))
         case None => promise.failure(new ServiceException(ServiceErrorCode.EC_SYSTEM_ERROR))
       }
