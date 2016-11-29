@@ -1,17 +1,14 @@
 import akka.actor.Actor
 import com.lawsofnature.common.edecrypt.DESUtils
 import com.lawsofnature.helper.{Constant, JsonHelper}
-import com.lawsofnature.request.CheckIdentityRequest
+import com.lawsofnature.request.{CheckIdentityRequest, RegisterRequest}
 
 /**
   * Created by fangzhongwei on 2016/10/25.
   */
 
 object FuturePromise extends App {
-
-  println(DESUtils.encrypt("{\"lat\":\"100.523523\",\"lng\":\"50.255474\",\"dt\":1,\"di\":\"2\",\"un\":\"fangzhongweikk\",\"pid\":1,\"i\":\"15881167999\",\"pwd\":\"a1234569\"}", Constant.defaultDesKey))
 //  println(DESUtils.encrypt(JsonHelper.writeValueAsString(CheckIdentityRequest("15881126718", 1)), Constant.defaultDesKey))
-  println(DESUtils.decrypt("3FDF117D9E5A6AB7529709DD819F38250D1AB38C58F0604F2F84B97B2FF7E3E65884DF71ED0B82A17FB60C6A6F86147B", Constant.defaultDesKey))
-
-
+  println(DESUtils.encrypt(JsonHelper.writeValueAsString(RegisterRequest("123.235874","89.458762","中国","四川","成都","高新区","天府广场1号", 2, "81fjklduuiujjsjsjs", "天华路2",1,"15987654322","ko890890")), Constant.defaultDesKey))
+  println(DESUtils.decrypt("3FDF117D9E5A6AB79810FB47BB31B71FB6BFF37221A9E47B622A28626B371FE6BA6EB8AA7EDCE7F95019F86EE7DE434971646C77707C35BFE9C753BD9C1DD5263F92C982C0E12F48FC0025463923F7F889A09EB2752B9D21", Constant.defaultDesKey))
 }

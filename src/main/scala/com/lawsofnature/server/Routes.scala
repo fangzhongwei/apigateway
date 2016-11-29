@@ -78,9 +78,9 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
               case true =>
                 salt = sessionResponse.salt
               case false =>
-                throw new ServiceException(ServiceErrorCode.get(sessionResponse.code))
+                throw ServiceException.make(ServiceErrorCode.get(sessionResponse.code))
             }
-          case None => throw new ServiceException(ServiceErrorCode.EC_SSO_SESSION_EXPIRED)
+          case None => throw ServiceException.make(ServiceErrorCode.EC_SSO_SESSION_EXPIRED)
         }
 
       ActionInvoker.invoke(actionId, ip, traceId, body, salt)

@@ -50,7 +50,7 @@ class MemberServiceImpl @Inject()(memberClient: MemberClientService) extends Mem
         case true =>
           response.success(Some(memberIdentityExistsResponse.exists))
         case false =>
-          response.failure(new ServiceException(ServiceErrorCode.get(memberIdentityExistsResponse.code)))
+          response.failure(ServiceException.make(ServiceErrorCode.get(memberIdentityExistsResponse.code)))
       }
     }
     response.future
