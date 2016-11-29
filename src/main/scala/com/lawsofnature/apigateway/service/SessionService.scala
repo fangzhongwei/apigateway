@@ -1,9 +1,9 @@
-package com.lawsofnature.service
+package com.lawsofnature.apigateway.service
 
 import javax.inject.Inject
 
 import RpcSSO.{LoginRequest, SessionResponse}
-import com.lawsofnature.request.AppLoginRequest
+import com.lawsofnature.apigateway.request.AppLoginRequest
 import com.lawsofnature.sso.client.SSOClientService
 
 import scala.concurrent.{Future, Promise}

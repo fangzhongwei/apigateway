@@ -1,11 +1,11 @@
-package com.lawsofnature.service
+package com.lawsofnature.apigateway.service
 
 import javax.inject.Inject
 
 import RpcMember.{BaseResponse, MemberIdentityExistsResponse, MemberRegisterRequest, MemberResponse}
 import com.lawsofnature.common.exception.{ServiceErrorCode, ServiceException}
 import com.lawsofnature.member.client.MemberClientService
-import com.lawsofnature.request.{CheckIdentityRequest, RegisterRequest}
+import com.lawsofnature.apigateway.request.{CheckIdentityRequest, RegisterRequest}
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext.Implicits.global

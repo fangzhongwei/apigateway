@@ -1,4 +1,4 @@
-package com.lawsofnature.request
+package com.lawsofnature.apigateway.request
 
 import com.lawsofnature.common.exception.ServiceErrorCode._
 import org.apache.commons.lang.StringUtils

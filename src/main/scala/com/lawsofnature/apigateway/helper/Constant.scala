@@ -1,4 +1,4 @@
-package com.lawsofnature.helper
+package com.lawsofnature.apigateway.helper
 
 import com.typesafe.config.ConfigFactory
 

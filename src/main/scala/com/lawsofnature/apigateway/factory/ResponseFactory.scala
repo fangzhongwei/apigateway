@@ -1,13 +1,13 @@
-package com.lawsofnature.factory
+package com.lawsofnature.apigateway.factory
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.StandardRoute
+import com.lawsofnature.apigateway.enumeration.SuccessResponse
 import com.lawsofnature.common.edecrypt.DESUtils
 import com.lawsofnature.common.exception.ServiceErrorCode
 import com.lawsofnature.common.exception.ServiceErrorCode._
-import com.lawsofnature.enumeration.SuccessResponse
-import com.lawsofnature.helper.{Constant, JsonHelper}
-import com.lawsofnature.response.ApiResponse
+import com.lawsofnature.apigateway.helper.{Constant, JsonHelper}
+import com.lawsofnature.apigateway.response.ApiResponse
 
 /**
   * cache response, avoid create every time

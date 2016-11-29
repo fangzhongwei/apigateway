@@ -1,14 +1,15 @@
-package com.lawsofnature.action
+package com.lawsofnature.apigateway.action
 
 import javax.inject.Inject
 
-import com.lawsofnature.annotations.ApiMapping
+import com.lawsofnature.apigateway.annotations.ApiMapping
+import com.lawsofnature.apigateway.enumeration.SuccessResponse
+import com.lawsofnature.apigateway.factory.ResponseFactory
+import com.lawsofnature.apigateway.service.MemberService
 import com.lawsofnature.common.exception.ServiceErrorCode
-import com.lawsofnature.enumeration.SuccessResponse
-import com.lawsofnature.factory.ResponseFactory
-import com.lawsofnature.request.{CheckIdentityRequest, RegisterRequest}
-import com.lawsofnature.response.ApiResponse
-import com.lawsofnature.service.MemberService
+import com.lawsofnature.apigateway.factory.ResponseFactory
+import com.lawsofnature.apigateway.request.{CheckIdentityRequest, RegisterRequest}
+import com.lawsofnature.apigateway.response.ApiResponse
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.{Future, Promise}

@@ -1,15 +1,16 @@
-package com.lawsofnature.server
+package com.lawsofnature.apigateway.server
 
 import javax.inject.{Inject, Named}
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
-import com.lawsofnature.action.{RegisterAction, SSOAction}
+import com.lawsofnature.apigateway.action.RegisterAction
+import com.lawsofnature.apigateway.action.{RegisterAction, SSOAction}
+import com.lawsofnature.apigateway.invoker.ActionInvoker
 import com.lawsofnature.common.exception.{ServiceErrorCode, ServiceException}
-import com.lawsofnature.factory.ResponseFactory
-import com.lawsofnature.helper.Constant
-import com.lawsofnature.invoker.ActionInvoker
-import com.lawsofnature.service.SessionService
+import com.lawsofnature.apigateway.factory.ResponseFactory
+import com.lawsofnature.apigateway.helper.Constant
+import com.lawsofnature.apigateway.service.SessionService
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.duration._

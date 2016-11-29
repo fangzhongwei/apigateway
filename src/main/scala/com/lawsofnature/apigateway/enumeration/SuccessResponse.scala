@@ -1,4 +1,4 @@
-package com.lawsofnature.enumeration
+package com.lawsofnature.apigateway.enumeration
 
 /**
   * Created by fangzhongwei on 2016/11/3.

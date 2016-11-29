@@ -1,4 +1,4 @@
-package com.lawsofnature.helper
+package com.lawsofnature.apigateway.helper
 
 /**
   * Created by fangzhongwei on 2016/10/10.

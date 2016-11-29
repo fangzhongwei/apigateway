@@ -1,5 +1,4 @@
-package com.lawsofnature.response
-
+package com.lawsofnature.apigateway.response
 
 /**
   * Created by fangzhongwei on 2016/10/10.

@@ -1,4 +1,4 @@
-package com.lawsofnature.server
+package com.lawsofnature.apigateway.server
 
 import java.lang.reflect.Method
 import java.util
@@ -14,11 +14,13 @@ import com.google.inject.matcher.Matchers
 import com.google.inject.name.Names
 import com.google.inject.{AbstractModule, Binding, Guice, Key}
 import com.lawsofnatrue.common.ice.{ConfigHelper, IcePrxFactory, IcePrxFactoryImpl}
-import com.lawsofnature.action.{RegisterAction, RegisterActionImpl, SSOAction, SSOActionImpl}
-import com.lawsofnature.annotations.ApiMapping
+import com.lawsofnature.apigateway.action.{RegisterAction, RegisterActionImpl, SSOAction, SSOActionImpl}
+import com.lawsofnature.apigateway.action.{RegisterAction, RegisterActionImpl, SSOAction, SSOActionImpl}
+import com.lawsofnature.apigateway.annotations.ApiMapping
+import com.lawsofnature.apigateway.service.{MemberService, MemberServiceImpl}
 import com.lawsofnature.common.exception.ServiceException
 import com.lawsofnature.member.client.{MemberClientService, MemberClientServiceImpl}
-import com.lawsofnature.service.{MemberService, MemberServiceImpl, SessionService, SessionServiceImpl}
+import com.lawsofnature.apigateway.service.{MemberServiceImpl, SessionService, SessionServiceImpl}
 import com.lawsofnature.sso.client.{SSOClientService, SSOClientServiceImpl}
 import com.typesafe.config.ConfigFactory
 import org.aopalliance.intercept.{MethodInterceptor, MethodInvocation}

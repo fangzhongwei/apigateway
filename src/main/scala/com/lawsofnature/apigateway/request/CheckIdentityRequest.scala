@@ -1,7 +1,7 @@
-package com.lawsofnature.request
+package com.lawsofnature.apigateway.request
 
+import com.lawsofnature.apigateway.helper.RegHelper
 import com.lawsofnature.common.exception.ServiceErrorCode._
-import com.lawsofnature.helper.RegHelper
 import org.apache.commons.lang.StringUtils
 
 /**

@@ -1,21 +1,18 @@
-package com.lawsofnature.invoker
+package com.lawsofnature.apigateway.invoker
 
 import java.lang.reflect.Method
 import java.util
 
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server._
-import com.lawsofnature.annotations.ApiMapping
+import com.lawsofnature.apigateway.annotations.ApiMapping
+import com.lawsofnature.apigateway.helper.JsonHelper
+import com.lawsofnature.apigateway.server.HttpService
 import com.lawsofnature.common.edecrypt.DESUtils
 import com.lawsofnature.common.exception.{ServiceErrorCode, ServiceException}
-import com.lawsofnature.helper.JsonHelper
-import com.lawsofnature.response.ApiResponse
-import com.lawsofnature.server.HttpService
+import com.lawsofnature.apigateway.response.ApiResponse
 
-import scala.concurrent.{Await, Future, Promise}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await, Future, Promise}
 
 /**
   * Created by fangzhongwei on 2016/11/28.
@@ -45,7 +42,6 @@ object ActionInvoker {
   def invoke(actionId: Int, ip: String, traceId: String, body: String, salt: String): Future[String] = {
     val promise: Promise[String] with Object = Promise[String]()
     Future {
-
       val maybeTuple: Option[(Method, Class[_], ApiMapping)] = apiMap.get(actionId)
       maybeTuple match {
         case Some(tuple) =>

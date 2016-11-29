@@ -1,12 +1,13 @@
-package com.lawsofnature.action
+package com.lawsofnature.apigateway.action
 
 import javax.inject.Inject
 
-import com.lawsofnature.annotations.ApiMapping
-import com.lawsofnature.factory.ResponseFactory
-import com.lawsofnature.request.AppLoginRequest
-import com.lawsofnature.response.ApiResponse
-import com.lawsofnature.service.SessionService
+import com.lawsofnature.apigateway.annotations.ApiMapping
+import com.lawsofnature.apigateway.annotations.ApiMapping
+import com.lawsofnature.apigateway.factory.ResponseFactory
+import com.lawsofnature.apigateway.request.AppLoginRequest
+import com.lawsofnature.apigateway.response.ApiResponse
+import com.lawsofnature.apigateway.service.SessionService
 
 import scala.concurrent.{Future, Promise}
 import scala.util.Success
