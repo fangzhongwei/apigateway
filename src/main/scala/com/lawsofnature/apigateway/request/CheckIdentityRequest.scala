@@ -9,10 +9,7 @@ import com.lawsofnature.common.exception.ErrorCode._
   * pid pid
   * Created by fangzhongwei on 2016/11/22.
   */
-
-
 case class CheckIdentityRequest(@Validate(required = true, maxLength = 128, error = EC_INVALID_REQUEST)
                                 var i: String,
                                 @Validate(required = true, min = 0, max = 2, error = EC_INVALID_REQUEST)
-                                var pid: Int) {
-}
+                                var pid: Int)
