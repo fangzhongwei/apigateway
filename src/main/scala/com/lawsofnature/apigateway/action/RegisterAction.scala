@@ -73,8 +73,8 @@ class RegisterActionImpl @Inject()(memberService: MemberService) extends Registe
         }
       }
 
-      logger.info("start remote check..." + identityValid)
       if (identityValid) {
+        logger.info("start remote check...")
         (memberService.isMemberIdentityExists(traceId, identity)) onComplete {
           case Success(memberIdentityExistsResponse) => memberIdentityExistsResponse match {
             case Some(exists) =>
@@ -97,7 +97,9 @@ class RegisterActionImpl @Inject()(memberService: MemberService) extends Registe
             promise.failure(ex)
         }
       }
+
     }
+
     promise.future
   }
 }

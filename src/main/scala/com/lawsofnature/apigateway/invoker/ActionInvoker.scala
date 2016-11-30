@@ -13,14 +13,14 @@ import com.lawsofnature.common.helper.JsonHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{Await, Future, Promise}
 import scala.util.{Failure, Success}
 
 /**
   * Created by fangzhongwei on 2016/11/28.
   */
 object ActionInvoker {
-  val EMPTY: String = ""
+  implicit val timeout = (90 seconds)
 
   private val classList: util.ArrayList[Class[_]] = HttpService.actionBeanClassList
 
@@ -40,7 +40,6 @@ object ActionInvoker {
       }
     }
   }
-  implicit val timeout = (90 seconds)
 
   def invoke(actionId: Int, ip: String, traceId: String, body: String, salt: String): Future[String] = {
     val promise: Promise[String] with Object = Promise[String]()
@@ -59,10 +58,8 @@ object ActionInvoker {
               val response: Future[ApiResponse] = method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), traceId, ip, request).asInstanceOf[Future[ApiResponse]]
               response onComplete {
                 case Success(response) =>
-                  println("Success...")
                   promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(response), salt))
                 case Failure(ex) =>
-                  println("Failure...")
                   ex match {
                     case e: ServiceException =>
                       promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(new ApiResponse(e.getErrorCode.getCode, e.getErrorCode.getMessage)), salt))

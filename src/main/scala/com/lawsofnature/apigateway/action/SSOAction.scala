@@ -10,7 +10,7 @@ import com.lawsofnature.apigateway.response.ApiResponse
 import com.lawsofnature.apigateway.service.SessionService
 
 import scala.concurrent.{Future, Promise}
-import scala.util.Success
+import scala.util.{Failure, Success}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -35,6 +35,8 @@ class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction 
             case None =>
               promise.success(ResponseFactory.commonErrorResponse())
           }
+          case Failure(ex) =>
+            promise.failure(ex)
         }
       }
     }
