@@ -7,12 +7,15 @@ import com.lawsofnature.common.exception.ErrorCode
 import com.lawsofnature.common.helper.RegHelper
 import org.apache.commons.lang.StringUtils
 
+import scala.annotation.meta.field
 import scala.util.control.Breaks
 
 /**
   * Created by fangzhongwei on 2016/11/29.
   */
 object Validator {
+  type Validate = FieldValidate@field
+
   private val STRING: String = "string"
   private val INT: String = "int"
   private val LONG: String = "long"
