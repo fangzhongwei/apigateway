@@ -13,7 +13,7 @@ import scala.util.control.Breaks
   * Created by fangzhongwei on 2016/11/29.
   */
 object Validator {
-  private val STRING: String = "sting"
+  private val STRING: String = "string"
   private val INT: String = "int"
   private val LONG: String = "long"
 
@@ -22,7 +22,7 @@ object Validator {
 
     val declaredFields: Array[Field] = request.getClass.getDeclaredFields
 
-    val i = 0
+    var i = 0
     var field: Field = null
 
     //for String
@@ -46,10 +46,12 @@ object Validator {
 
     loop.breakable {
       while (i < declaredFields.length) {
-        field = declaredFields(2 - i)
+        field = declaredFields(i)
+        i = i + 1
+        field.setAccessible(true)
         val fieldValidate: FieldValidate = field.getAnnotation[FieldValidate](classOf[FieldValidate])
         if (fieldValidate != null) {
-          fieldType(field.getDeclaringClass) match {
+          fieldType(field.getType) match {
             case 1 =>
               strValue = field.get(request).asInstanceOf[String]
               mask = fieldValidate.mask()
@@ -85,7 +87,7 @@ object Validator {
         }
       }
     }
-    None
+    errorCode
   }
 
   private def fieldType(clazz: Class[_]): Int = {

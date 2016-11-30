@@ -1,21 +1,23 @@
 package com.lawsofnature.apigateway.annotations;
 
-import com.lawsofnature.common.exception.ErrorCode;
-import scala.Int;
 
-import javax.inject.Qualifier;
-import java.lang.annotation.*;
+import com.lawsofnature.common.exception.ErrorCode;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import javax.validation.Constraint;
 
 import static com.lawsofnature.common.exception.ErrorCode.EC_INVALID_REQUEST;
 
-/**
- * Created by fangzhongwei on 2016/11/3.
- */
-//@Target(ElementType.FIELD)
-@Qualifier
-@Documented
-@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Constraint(
+        validatedBy = {}
+)
 public @interface FieldValidate {
     String mask() default "";
 

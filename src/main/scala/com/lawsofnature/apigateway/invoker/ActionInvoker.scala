@@ -4,16 +4,16 @@ import java.lang.reflect.Method
 import java.util
 
 import com.lawsofnature.apigateway.annotations.ApiMapping
+import com.lawsofnature.apigateway.response.ApiResponse
 import com.lawsofnature.apigateway.server.HttpService
+import com.lawsofnature.apigateway.validate.Validator
 import com.lawsofnature.common.edecrypt.DESUtils
 import com.lawsofnature.common.exception.{ErrorCode, ServiceException}
-import com.lawsofnature.apigateway.response.ApiResponse
-import com.lawsofnature.apigateway.validate.Validator
 import com.lawsofnature.common.helper.JsonHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future, Promise}
+import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
 /**
@@ -54,16 +54,19 @@ object ActionInvoker {
           val request: AnyRef = JsonHelper.read(DESUtils.decrypt(body, salt), parseClass)
 
           Validator.validate(request) match {
-            case Some(errorCode) => promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(new ApiResponse(errorCode.getCode, EMPTY)), salt))
+            case Some(errorCode) => promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(new ApiResponse(errorCode.getCode, errorCode.getMessage)), salt))
             case None =>
               val response: Future[ApiResponse] = method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), traceId, ip, request).asInstanceOf[Future[ApiResponse]]
               response onComplete {
-                case Success(response) => promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(response), salt))
+                case Success(response) =>
+                  println("Success...")
+                  promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(response), salt))
                 case Failure(ex) =>
+                  println("Failure...")
                   ex match {
-                    case e:ServiceException =>
-                      promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(new ApiResponse(e.getErrorCode.getCode, EMPTY)), salt))
-                    case _ => promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(new ApiResponse(ErrorCode.EC_SYSTEM_ERROR.getCode, EMPTY)), salt))
+                    case e: ServiceException =>
+                      promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(new ApiResponse(e.getErrorCode.getCode, e.getErrorCode.getMessage)), salt))
+                    case _ => promise.success(DESUtils.encrypt(JsonHelper.writeValueAsString(new ApiResponse(ErrorCode.EC_SYSTEM_ERROR.getCode, ErrorCode.EC_SYSTEM_ERROR.getMessage)), salt))
                   }
               }
           }

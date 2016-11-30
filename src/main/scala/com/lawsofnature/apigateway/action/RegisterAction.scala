@@ -73,6 +73,7 @@ class RegisterActionImpl @Inject()(memberService: MemberService) extends Registe
         }
       }
 
+      logger.info("start remote check..." + identityValid)
       if (identityValid) {
         (memberService.isMemberIdentityExists(traceId, identity)) onComplete {
           case Success(memberIdentityExistsResponse) => memberIdentityExistsResponse match {
