@@ -19,9 +19,7 @@ import com.lawsofnature.common.exception.ErrorCode._
   * p - password
   * Created by fangzhongwei on 2016/11/23.
   */
-case class AppLoginRequest(@Validate(required = true, maxLength = 128, error = EC_INVALID_REQUEST)
-                            ti: String,
-                            @Validate(required = true, min = 1, max = 10, error = EC_INVALID_REQUEST)
+case class AppLoginRequest(@Validate(required = true, min = 1, max = 10, error = EC_INVALID_REQUEST)
                             ci: Int,
                             @Validate(required = true, min = 1, max = 4, error = EC_INVALID_REQUEST)
                             dt: Int,
