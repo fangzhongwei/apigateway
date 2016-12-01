@@ -19,7 +19,6 @@ import org.slf4j.{Logger, LoggerFactory}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success}
 
 /**
   * Created by fangzhongwei on 2016/11/28.
@@ -89,10 +88,10 @@ object BodyActionInvoker {
         case se: ServiceException =>
           logger.error(traceId, se)
           promise.success(responseBody(ApiResponse.makeErrorResponse(se.getErrorCode), ignoreEDecrypt, salt))
-        case ite:InvocationTargetException =>
+        case ite: InvocationTargetException =>
           logger.error(traceId, ite)
           promise.success(responseBody(ApiResponse.makeErrorResponse(ErrorCode.EC_SYSTEM_ERROR), ignoreEDecrypt, salt))
-        case e:Exception =>
+        case e: Exception =>
           logger.error(traceId, e)
           promise.success(responseBody(ApiResponse.makeErrorResponse(ErrorCode.EC_SYSTEM_ERROR), ignoreEDecrypt, salt))
       } finally {
@@ -102,7 +101,7 @@ object BodyActionInvoker {
     promise.future
   }
 
-  def responseBody(apiResponse: ApiResponse, ignoreEDecrypt:Boolean, salt:String):String = {
+  def responseBody(apiResponse: ApiResponse, ignoreEDecrypt: Boolean, salt: String): String = {
     ignoreEDecrypt match {
       case true => JsonHelper.writeValueAsString(apiResponse)
       case _ => DESUtils.encrypt(JsonHelper.writeValueAsString(apiResponse), salt)
@@ -116,6 +115,6 @@ object BodyActionInvoker {
         case _ => DESUtils.decrypt(body, salt)
       }
     }
-   JsonHelper.read(json, parseClass)
+    JsonHelper.read(json, parseClass)
   }
 }

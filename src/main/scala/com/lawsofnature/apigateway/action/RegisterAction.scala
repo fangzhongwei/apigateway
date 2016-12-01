@@ -25,6 +25,22 @@ class RegisterActionImpl @Inject()(memberService: MemberService) extends Registe
 
   @ApiMapping(id = 1002, ignoreSession = true)
   def register(traceId: String, ip: String, registerRequest: RegisterRequest): ApiResponse = {
+    val pid: Int = registerRequest.pid
+    val identity: String = registerRequest.i
+    pid match {
+      case 1 => RegHelper.isMobile(identity) match {
+        case true => doRegister(traceId, ip, registerRequest)
+        case _ => ApiResponse.makeErrorResponse(ErrorCode.EC_UC_INVALID_MOBILE)
+      }
+      case 2 => RegHelper.isEmail(identity) match {
+        case true => doRegister(traceId, ip, registerRequest)
+        case _ => ApiResponse.makeErrorResponse(ErrorCode.EC_UC_INVALID_EMAIL)
+      }
+      case _ => doRegister(traceId, ip, registerRequest)
+    }
+  }
+
+  def doRegister(traceId: String, ip: String, registerRequest: RegisterRequest): ApiResponse = {
     val baseResponse: BaseResponse = memberService.register(traceId, ip, registerRequest)
     baseResponse.success match {
       case true =>
