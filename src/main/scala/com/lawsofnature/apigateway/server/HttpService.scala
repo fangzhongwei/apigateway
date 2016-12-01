@@ -75,7 +75,7 @@ object HttpService extends App {
 
     val clazz: Class[_ <: Key[_]] = entry.getKey.getClass
     val rawType: Class[_] = entry.getKey.getTypeLiteral.getRawType
-    if (rawType.getName.startsWith("com.lawsofnature.apigateway.action")) {
+    if (rawType.getName.startsWith(ConfigFactory.load().getString("pkg.action"))) {
       val value1: LinkedBindingImpl[_] = entry.getValue.asInstanceOf[LinkedBindingImpl[_]]
       val rawType1: Class[_] = value1.getLinkedKey.getTypeLiteral.getRawType
       actionBeanClassList.add(rawType1)

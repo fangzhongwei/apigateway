@@ -3,17 +3,15 @@ package com.lawsofnature.apigateway.server
 import javax.inject.{Inject, Named}
 
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.{ExceptionHandler, Route}
-import com.lawsofnature.apigateway.action.RegisterAction
+import akka.http.scaladsl.server.ExceptionHandler
 import com.lawsofnature.apigateway.action.{RegisterAction, SSOAction}
-import com.lawsofnature.apigateway.invoker.ActionInvoker
-import com.lawsofnature.common.exception.{ErrorCode, ServiceException}
-import com.lawsofnature.apigateway.factory.ResponseFactory
 import com.lawsofnature.apigateway.helper.Constant
+import com.lawsofnature.apigateway.invoker.BodyActionInvoker
 import com.lawsofnature.apigateway.service.SessionService
+import com.lawsofnature.common.exception.{ErrorCode, ServiceException}
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.{Duration, _}
 import scala.concurrent.{Await, Future}
 
 /**
@@ -53,9 +51,9 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
                     token =>
                       entity(as[String]) {
                         body => {
-                          onSuccess(doRoute(ip, traceId, actionId.toInt, token, body)) {
+                          onSuccess(BodyActionInvoker.invoke(sessionService,actionId.toInt, ip, traceId, body, token)) {
                             case result =>
-                              println("call service cost : " + (System.currentTimeMillis() - millis))
+                              logger.info("call service cost : " + (System.currentTimeMillis() - millis))
                               complete(result)
                           }
                         }
@@ -68,25 +66,4 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
       logger.error("system error")
       complete("internal error")
     }
-
-  def doRoute(ip: String, traceId: String, actionId: Int, token: String, body: String): Future[String] = {
-    try {
-      var salt: String = Constant.defaultDesKey
-      if (actionId >= 2002)
-        Await.result(sessionService.touch(traceId, token), timeout) match {
-          case Some(sessionResponse) =>
-            sessionResponse.success match {
-              case true =>
-                salt = sessionResponse.salt
-              case false =>
-                throw ServiceException.make(ErrorCode.get(sessionResponse.code))
-            }
-          case None => throw ServiceException.make(ErrorCode.EC_SSO_SESSION_EXPIRED)
-        }
-
-      ActionInvoker.invoke(actionId, ip, traceId, body, salt)
-    } finally {
-
-    }
-  }
 }

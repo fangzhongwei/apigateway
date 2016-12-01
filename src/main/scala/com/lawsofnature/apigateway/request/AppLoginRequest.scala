@@ -1,8 +1,7 @@
 package com.lawsofnature.apigateway.request
 
-import com.lawsofnature.common.exception.ErrorCode
+import com.lawsofnature.apigateway.validate.Validator._
 import com.lawsofnature.common.exception.ErrorCode._
-import org.apache.commons.lang.StringUtils
 
 /**
   * ti - trace id
@@ -20,28 +19,24 @@ import org.apache.commons.lang.StringUtils
   * p - password
   * Created by fangzhongwei on 2016/11/23.
   */
-case class AppLoginRequest(ti: String, ci:Int, dt: Int, di: String, lat: String, lng: String, ctry: String, pro: String, c: String, cty: String, addr: String, i: String, pwd: String) {
-  def validate(): Option[ErrorCode] = {
-    var error: Option[ErrorCode] = None
-    if (StringUtils.isBlank(ti)) {
-      error = Some(EC_INVALID_REQUEST)
-    } else if (StringUtils.isBlank(lat)) {
-      error = Some(EC_INVALID_REQUEST)
-    } else if (StringUtils.isBlank(lng)) {
-      error = Some(EC_INVALID_REQUEST)
-    } else if (1 != dt && 2 != dt) {
-      error = Some(EC_INVALID_REQUEST)
-    } else if (StringUtils.isBlank(di) || di.length > 256) {
-      error = Some(EC_INVALID_REQUEST)
-    } else if (StringUtils.isBlank(i)) {
-      error = Some(EC_INVALID_REQUEST)
-    } else if (i.length > 64) {
-      error = Some(EC_UC_USERNAME_LENGTH_LIMIT)
-    } else if (StringUtils.isBlank(pwd)) {
-      error = Some(EC_INVALID_REQUEST)
-    } else if (pwd.length < 7 || pwd.length > 16) {
-      error = Some(EC_UC_PASSWORD_LENGTH_LIMIT)
-    }
-    error
-  }
-}
+case class AppLoginRequest(@Validate(required = true, maxLength = 128, error = EC_INVALID_REQUEST)
+                            ti: String,
+                            @Validate(required = true, min = 1, max = 10, error = EC_INVALID_REQUEST)
+                            ci: Int,
+                            @Validate(required = true, min = 1, max = 4, error = EC_INVALID_REQUEST)
+                            dt: Int,
+                            @Validate(required = true, maxLength = 128, error = EC_INVALID_REQUEST)
+                            di: String,
+                            @Validate(required = true, maxLength = 10, error = EC_INVALID_REQUEST)
+                            lat: String,
+                            @Validate(required = true, maxLength = 10, error = EC_INVALID_REQUEST)
+                            lng: String,
+                            ctry: String,
+                            pro: String,
+                            c: String,
+                            cty: String,
+                            addr: String,
+                            @Validate(required = true, maxLength = 64, error = EC_UC_USERNAME_LENGTH_LIMIT)
+                            i: String,
+                            @Validate(required = true, maxLength = 256, error = EC_INVALID_REQUEST)
+                            pwd: String)
