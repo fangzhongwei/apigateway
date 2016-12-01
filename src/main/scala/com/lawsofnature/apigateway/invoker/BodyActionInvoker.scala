@@ -79,9 +79,7 @@ object BodyActionInvoker {
             Validator.validate(request) match {
               case Some(errorCode) => throw ServiceException.make(errorCode)
               case None =>
-                val invokeResponse: AnyRef = method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), traceId, ip, request)
-                println(invokeResponse.getClass)
-                promise.success(responseBody(invokeResponse.asInstanceOf[ApiResponse], ignoreEDecrypt, salt))
+                promise.success(responseBody(method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), traceId, ip, request).asInstanceOf[ApiResponse], ignoreEDecrypt, salt))
             }
           case None =>
             throw ServiceException.make(ErrorCode.EC_SYSTEM_ERROR)
