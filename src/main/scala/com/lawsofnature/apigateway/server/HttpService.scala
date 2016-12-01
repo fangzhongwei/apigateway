@@ -15,12 +15,9 @@ import com.google.inject.name.Names
 import com.google.inject.{AbstractModule, Binding, Guice, Key}
 import com.lawsofnatrue.common.ice.{ConfigHelper, IcePrxFactory, IcePrxFactoryImpl}
 import com.lawsofnature.apigateway.action.{RegisterAction, RegisterActionImpl, SSOAction, SSOActionImpl}
-import com.lawsofnature.apigateway.action.{RegisterAction, RegisterActionImpl, SSOAction, SSOActionImpl}
-import com.lawsofnature.apigateway.annotations.ApiMapping
-import com.lawsofnature.apigateway.service.{MemberService, MemberServiceImpl}
+import com.lawsofnature.apigateway.service.{MemberService, MemberServiceImpl, SessionService, SessionServiceImpl}
 import com.lawsofnature.common.exception.ServiceException
 import com.lawsofnature.member.client.{MemberClientService, MemberClientServiceImpl}
-import com.lawsofnature.apigateway.service.{MemberServiceImpl, SessionService, SessionServiceImpl}
 import com.lawsofnature.sso.client.{SSOClientService, SSOClientServiceImpl}
 import com.typesafe.config.ConfigFactory
 import org.aopalliance.intercept.{MethodInterceptor, MethodInvocation}
@@ -60,7 +57,7 @@ object HttpService extends App {
       bind(classOf[SSOClientService]).to(classOf[SSOClientServiceImpl]).asEagerSingleton()
       bind(classOf[RegisterAction]).to(classOf[RegisterActionImpl]).asEagerSingleton()
       bind(classOf[SSOAction]).to(classOf[SSOActionImpl]).asEagerSingleton()
-//      bindInterceptor(Matchers.any(), Matchers.annotatedWith(classOf[ApiMapping]), apiMethodInterceptor)
+      //      bindInterceptor(Matchers.any(), Matchers.annotatedWith(classOf[ApiMapping]), apiMethodInterceptor)
       bindInterceptor(Matchers.any(), Matchers.any(), apiMethodInterceptor)
     }
   })
@@ -85,13 +82,12 @@ object HttpService extends App {
   injector.getInstance(classOf[MemberClientService]).initClient
   injector.getInstance(classOf[SSOClientService]).initClient
 
-  implicit val system: ActorSystem = ActorSystem("my-system")
+  implicit val system: ActorSystem = ActorSystem("http-system")
   implicit val materializer = ActorMaterializer()
   implicit val dispatcher = system.dispatcher
 
   val host: String = conf.getString("http.host")
   val port: Int = conf.getInt("http.port")
-
 
   implicit def myExceptionHandler: ExceptionHandler = ExceptionHandler {
     case ex: ServiceException =>
@@ -104,7 +100,7 @@ object HttpService extends App {
       extractUri { uri =>
         logger.error(s"Request to $uri could not be handled normally")
         //        ResponseFactory.commonErrorResponse()
-        complete("internal error")
+        complete("invalid request")
       }
   }
 

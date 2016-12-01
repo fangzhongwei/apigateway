@@ -1,6 +1,6 @@
 package com.lawsofnature.apigateway.invoker
 
-import java.lang.reflect.Method
+import java.lang.reflect.{InvocationTargetException, Method}
 import java.util
 
 import RpcSSO.SessionResponse
@@ -78,16 +78,22 @@ object BodyActionInvoker {
 
             Validator.validate(request) match {
               case Some(errorCode) => throw ServiceException.make(errorCode)
-              case None => promise.success(responseBody(method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), traceId, ip, request).asInstanceOf[ApiResponse], ignoreEDecrypt, salt))
+              case None =>
+                val invokeResponse: AnyRef = method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), traceId, ip, request)
+                println(invokeResponse.getClass)
+                promise.success(responseBody(invokeResponse.asInstanceOf[ApiResponse], ignoreEDecrypt, salt))
             }
           case None =>
             throw ServiceException.make(ErrorCode.EC_SYSTEM_ERROR)
         }
 
       } catch {
-        case ex: ServiceException =>
-          logger.error(traceId, ex)
-          promise.success(responseBody(ApiResponse.makeErrorResponse(ex.getErrorCode), ignoreEDecrypt, salt))
+        case se: ServiceException =>
+          logger.error(traceId, se)
+          promise.success(responseBody(ApiResponse.makeErrorResponse(se.getErrorCode), ignoreEDecrypt, salt))
+        case ite:InvocationTargetException =>
+          logger.error(traceId, ite)
+          promise.success(responseBody(ApiResponse.makeErrorResponse(ErrorCode.EC_SYSTEM_ERROR), ignoreEDecrypt, salt))
         case e:Exception =>
           logger.error(traceId, e)
           promise.success(responseBody(ApiResponse.makeErrorResponse(ErrorCode.EC_SYSTEM_ERROR), ignoreEDecrypt, salt))

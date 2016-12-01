@@ -5,14 +5,11 @@ import javax.inject.{Inject, Named}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.ExceptionHandler
 import com.lawsofnature.apigateway.action.{RegisterAction, SSOAction}
-import com.lawsofnature.apigateway.helper.Constant
 import com.lawsofnature.apigateway.invoker.BodyActionInvoker
 import com.lawsofnature.apigateway.service.SessionService
-import com.lawsofnature.common.exception.{ErrorCode, ServiceException}
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.concurrent.duration.{Duration, _}
-import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
 
 /**
   * Created by kgoralski on 2016-05-02.
@@ -33,8 +30,7 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
       extractUri { uri =>
         logger.error("apigateway", ex)
         logger.error(s"Request to $uri could not be handled normally")
-        //        ResponseFactory.commonErrorResponse()
-        complete("internal error")
+        complete("error")
       }
   }
 
@@ -51,7 +47,7 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
                     token =>
                       entity(as[String]) {
                         body => {
-                          onSuccess(BodyActionInvoker.invoke(sessionService,actionId.toInt, ip, traceId, body, token)) {
+                          onSuccess(BodyActionInvoker.invoke(sessionService, actionId.toInt, ip, traceId, body, token)) {
                             case result =>
                               logger.info("call service cost : " + (System.currentTimeMillis() - millis))
                               complete(result)
@@ -64,6 +60,6 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
       }
     } ~ handleExceptions(myExceptionHandler) {
       logger.error("system error")
-      complete("internal error")
+      complete("invalid request")
     }
 }
