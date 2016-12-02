@@ -3,7 +3,8 @@ package com.lawsofnature.apigateway.action
 import javax.inject.Inject
 
 import RpcMember.{BaseResponse, MemberIdentityExistsResponse}
-import com.lawsofnature.apigateway.annotations.ApiMapping
+import com.lawsofnature.apigateway.annotations.{ApiMapping, Param}
+import com.lawsofnature.apigateway.enumerate.ParamSource
 import com.lawsofnature.apigateway.request.{CheckIdentityRequest, RegisterRequest}
 import com.lawsofnature.apigateway.response.{ApiResponse, SuccessResponse}
 import com.lawsofnature.apigateway.service.MemberService
@@ -17,14 +18,21 @@ import org.slf4j.{Logger, LoggerFactory}
 trait RegisterAction {
   def register(traceId: String, ip: String, registerRequest: RegisterRequest): ApiResponse
 
-  def checkIdentity(traceId: String, ip: String, checkIdentityRequest: CheckIdentityRequest): ApiResponse
+  def checkIdentity(checkIdentityRequest: CheckIdentityRequest, traceId: String, lan: String): ApiResponse
 }
 
 class RegisterActionImpl @Inject()(memberService: MemberService) extends RegisterAction {
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
+  val HEADER_IP = "X-Real-Ip"
+
   @ApiMapping(id = 1002, ignoreSession = true)
-  def register(traceId: String, ip: String, registerRequest: RegisterRequest): ApiResponse = {
+  def register(@Param(required = true, source = ParamSource.HEADER, name = "TI")
+               traceId: String,
+               @Param(required = true, source = ParamSource.HEADER, name = "X-Real-Ip")
+               ip: String,
+               @Param(required = true, source = ParamSource.BODY)
+               registerRequest: RegisterRequest): ApiResponse = {
     val pid: Int = registerRequest.pid
     val identity: String = registerRequest.i
     pid match {
@@ -51,7 +59,13 @@ class RegisterActionImpl @Inject()(memberService: MemberService) extends Registe
   }
 
   @ApiMapping(id = 1001, ignoreSession = true)
-  override def checkIdentity(traceId: String, ip: String, checkIdentityRequest: CheckIdentityRequest): ApiResponse = {
+  override def checkIdentity(@Param(required = true, source = ParamSource.BODY)
+                             checkIdentityRequest: CheckIdentityRequest,
+                             @Param(required = true, source = ParamSource.HEADER, name = "TI")
+                             traceId: String,
+                             @Param(name = "lan")
+                             lan: String): ApiResponse = {
+    logger.info(s"lan is : $lan")
     val pid: Int = checkIdentityRequest.pid
     val identity: String = checkIdentityRequest.i
     pid match {

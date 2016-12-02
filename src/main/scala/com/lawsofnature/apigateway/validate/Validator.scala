@@ -2,12 +2,12 @@ package com.lawsofnature.apigateway.validate
 
 import java.lang.reflect.Field
 
-import com.lawsofnature.apigateway.annotations.FieldValidate
-import com.lawsofnature.common.exception.ErrorCode
+import com.lawsofnature.apigateway.annotations.{FieldValidate, Param}
+import com.lawsofnature.common.exception.{ErrorCode, ServiceException}
 import com.lawsofnature.common.helper.RegHelper
 import org.apache.commons.lang.StringUtils
 
-import scala.annotation.meta.field
+import scala.annotation.meta.{field, param}
 import scala.util.control.Breaks
 
 /**
@@ -69,7 +69,8 @@ object Validator {
                   maxLength = fieldValidate.maxLength()
                   if (maxLength != -1 && maxLength < strValue.length) doBreak(fieldValidate)
                 case _ =>
-                  if (!RegHelper.isMatched(strValue, mask)) doBreak(fieldValidate)
+                  if (fieldValidate.required && StringUtils.isBlank(strValue)) throw doBreak(fieldValidate)
+                  if (StringUtils.isNotBlank(strValue) && !RegHelper.isMatched(strValue, mask)) doBreak(fieldValidate)
               }
             case 2 =>
               intValue = field.get(request).asInstanceOf[Int]

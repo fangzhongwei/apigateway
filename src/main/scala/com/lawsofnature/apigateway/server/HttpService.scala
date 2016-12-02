@@ -79,6 +79,7 @@ object HttpService extends App {
     }
   }
 
+  com.lawsofnature.apigateway.invoker.ActionInvoker.initActionMap
   injector.getInstance(classOf[MemberClientService]).initClient
   injector.getInstance(classOf[SSOClientService]).initClient
 

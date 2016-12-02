@@ -5,7 +5,7 @@ import javax.inject.{Inject, Named}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.ExceptionHandler
 import com.lawsofnature.apigateway.action.{RegisterAction, SSOAction}
-import com.lawsofnature.apigateway.invoker.BodyActionInvoker
+import com.lawsofnature.apigateway.invoker.ActionInvoker
 import com.lawsofnature.apigateway.service.SessionService
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -19,11 +19,6 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
   val logger: Logger = LoggerFactory.getLogger(getClass)
   implicit val timeout = (90 seconds)
 
-  val HEADER_IP = "X-Real-IP"
-  val HEADER_TRACE_ID = "TI"
-  val HEADER_ACTION_ID = "AI"
-  val HEADER_TOKEN = "TK"
-  val BLANK = ""
 
   val myExceptionHandler: ExceptionHandler = ExceptionHandler {
     case ex: Exception =>
@@ -37,27 +32,44 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
   val apigatewayRoutes =
     (path("v1.0-route") & post) {
       val millis: Long = System.currentTimeMillis()
-      headerValueByName(HEADER_IP) {
-        ip =>
-          headerValueByName(HEADER_TRACE_ID) {
-            traceId =>
-              headerValueByName(HEADER_ACTION_ID) {
-                actionId =>
-                  headerValueByName(HEADER_TOKEN) {
-                    token =>
-                      entity(as[String]) {
-                        body => {
-                          onSuccess(BodyActionInvoker.invoke(sessionService, actionId.toInt, ip, traceId, body, token)) {
-                            case result =>
-                              logger.info("call service cost : " + (System.currentTimeMillis() - millis))
-                              complete(result)
-                          }
-                        }
-                      }
+
+      extractRequest {
+        request =>
+          parameterMap {
+            paramMap => {
+              entity(as[String]) {
+                body =>
+                  onSuccess(ActionInvoker.invoke(sessionService, request.headers, paramMap, body)) {
+                    case result =>
+                      logger.info("call service cost : " + (System.currentTimeMillis() - millis))
+                      complete(result)
                   }
               }
+            }
           }
       }
+
+      //      headerValueByName(HEADER_IP) {
+      //        ip =>
+      //          headerValueByName(HEADER_TRACE_ID) {
+      //            traceId =>
+      //              headerValueByName(HEADER_ACTION_ID) {
+      //                actionId =>
+      //                  headerValueByName(HEADER_TOKEN) {
+      //                    token =>
+      //                      entity(as[String]) {
+      //                        body => {
+      //                          onSuccess(BodyActionInvoker.invoke(sessionService, actionId.toInt, ip, traceId, body, token)) {
+      //                            case result =>
+      //                              logger.info("call service cost : " + (System.currentTimeMillis() - millis))
+      //                              complete(result)
+      //                          }
+      //                        }
+      //                      }
+      //                  }
+      //              }
+      //          }
+      //      }
     } ~ handleExceptions(myExceptionHandler) {
       logger.error("system error")
       complete("invalid request")
