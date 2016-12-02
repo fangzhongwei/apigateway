@@ -2,7 +2,7 @@ name := """apigateway"""
 
 version := "1.0"
 
-javacOptions ++= Seq("-g","-parameters","-encoding", "UTF-8")
+javacOptions ++= Seq("-encoding", "UTF-8")
 
 //scalaVersion := "2.12.0"
 scalaVersion := "2.11.8"
@@ -30,9 +30,5 @@ libraryDependencies += "com.lawsofnature.common" % "common-edecrypt_2.11" % "1.0
 libraryDependencies += "com.lawsofnature.client" % "ssoclient_2.11" % "1.0"
 libraryDependencies += "com.lawsofnature.common" % "common-utils_2.11" % "1.0"
 
-// https://mvnrepository.com/artifact/org.objectweb.asm/org.objectweb.asm
-//libraryDependencies += "org.objectweb.asm" % "org.objectweb.asm" % "3.3.1.v201105211655"
-// https://mvnrepository.com/artifact/org.objectweb.asm/asm
-libraryDependencies += "org.objectweb.asm" % "asm" % "3.1"
 
 
