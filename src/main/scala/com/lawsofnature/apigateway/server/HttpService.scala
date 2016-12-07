@@ -39,7 +39,7 @@ object HttpService extends App {
         proceed = methodInvocation.proceed()
       } catch {
         case e: Exception => logger.error("system", e)
-          ""
+          proceed
       }
       logger.info("Call method " + name + " cost " + (System.currentTimeMillis() - millis))
       proceed

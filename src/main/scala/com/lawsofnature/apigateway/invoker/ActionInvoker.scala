@@ -87,7 +87,6 @@ object ActionInvoker {
                     }
                 }
               }
-              println(actionMethodParamAttributeSeq)
 
               if (actionMethodParamAttributeSeq.filter(_.source == ParamSource.BODY).length >= 2) {
                 logger.error(s"There can only be one body source param in a action method, method: ${method.toGenericString}. now system will shutdown ...")

@@ -2,7 +2,7 @@ package com.lawsofnature.apigateway.service
 
 import javax.inject.Inject
 
-import RpcMember.{BaseResponse, MemberIdentityExistsResponse, MemberRegisterRequest, MemberResponse}
+import RpcMember._
 import com.lawsofnature.apigateway.request.{CheckIdentityRequest, RegisterRequest}
 import com.lawsofnature.member.client.MemberClientService
 import org.slf4j.LoggerFactory
@@ -15,7 +15,11 @@ trait MemberService {
 
   def getMemberByIdentity(traceId: String, checkIdentityRequest: CheckIdentityRequest): MemberResponse
 
-  def isMemberIdentityExists(traceId: String, identity: String): MemberIdentityExistsResponse
+  def isMemberIdentityExists(traceId: String, identity: String): ExistedResponse
+
+  def isMemberUsernameExists(traceId: String, username: String): ExistedResponse
+
+  def getMemberByMemberId(traceId: String, memberId:Long): MemberResponse
 }
 
 class MemberServiceImpl @Inject()(memberClient: MemberClientService) extends MemberService {
@@ -23,5 +27,9 @@ class MemberServiceImpl @Inject()(memberClient: MemberClientService) extends Mem
 
   override def getMemberByIdentity(traceId: String, checkIdentityRequest: CheckIdentityRequest): MemberResponse = memberClient.getMemberByIdentity(traceId, checkIdentityRequest.i)
 
-  override def isMemberIdentityExists(traceId: String, identity: String): MemberIdentityExistsResponse = memberClient.isMemberIdentityExists(traceId, identity)
+  override def isMemberIdentityExists(traceId: String, identity: String): ExistedResponse = memberClient.isMemberIdentityExists(traceId, identity)
+
+  override def getMemberByMemberId(traceId: String, memberId: Long): MemberResponse = memberClient.getMemberByMemberId(traceId, memberId)
+
+  override def isMemberUsernameExists(traceId: String, username: String): ExistedResponse = memberClient.isMemberUsernameExists(traceId, username)
 }

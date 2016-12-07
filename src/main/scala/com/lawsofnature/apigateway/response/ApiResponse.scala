@@ -32,7 +32,5 @@ object ApiResponse {
     }
   }
 
-  def make(code: Int = 0, msg: String = null, data: AnyRef = None): ApiResponse = {
-    new ApiResponse(code = code, msg = msg, data = data)
-  }
+  def make(code: Int = 0, msg: String = null, data: AnyRef = None): ApiResponse = new ApiResponse(code = code, msg = msg, data = data)
 }
