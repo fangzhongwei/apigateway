@@ -2,11 +2,11 @@ package com.lawsofnature.apigateway.action
 
 import javax.inject.Inject
 
-import RpcSSO.SessionResponse
+import RpcSSO.{SSOBaseResponse, SessionResponse}
 import com.lawsofnature.apigateway.annotations.{ApiMapping, Param}
 import com.lawsofnature.apigateway.enumerate.ParamSource
 import com.lawsofnature.apigateway.request.AppLoginRequest
-import com.lawsofnature.apigateway.response.ApiResponse
+import com.lawsofnature.apigateway.response.{ApiResponse, SuccessResponse}
 import com.lawsofnature.apigateway.service.SessionService
 import com.lawsofnature.common.exception.ErrorCode
 
@@ -15,9 +15,11 @@ import com.lawsofnature.common.exception.ErrorCode
   */
 trait SSOAction {
   def login(traceId: String, ip: String, request: AppLoginRequest): ApiResponse
+
+  def logout(traceId: String): ApiResponse
 }
 
-class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction {
+class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction with BaseAction{
 
   @ApiMapping(id = 2001, ignoreSession = true)
   override def login(@Param(required = true, source = ParamSource.HEADER, name = "TI")
@@ -30,6 +32,16 @@ class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction 
     sessionResponse.success match {
       case true => ApiResponse.make(data = sessionResponse)
       case _ => ApiResponse.makeErrorResponse(ErrorCode.get(sessionResponse.code))
+    }
+  }
+
+  @ApiMapping(id = 2002)
+  override def logout(@Param(required = true, source = ParamSource.HEADER, name = "TI")
+                      traceId: String): ApiResponse = {
+    val response: SSOBaseResponse = sessionService.logout(traceId, getSession.token)
+    response.success match {
+      case true => ApiResponse.makeSuccessResponse(SuccessResponse.SUCCESS)
+      case false => ApiResponse.makeErrorResponse(ErrorCode.get(response.code))
     }
   }
 }

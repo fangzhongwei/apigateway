@@ -2,7 +2,7 @@ package com.lawsofnature.apigateway.service
 
 import javax.inject.Inject
 
-import RpcSSO.{LoginRequest, SessionResponse}
+import RpcSSO.{LoginRequest, SSOBaseResponse, SessionResponse}
 import com.lawsofnature.apigateway.request.AppLoginRequest
 import com.lawsofnature.sso.client.SSOClientService
 
@@ -12,6 +12,8 @@ import com.lawsofnature.sso.client.SSOClientService
 trait SessionService {
   def login(traceId: String, ip: String, appLoginRequest: AppLoginRequest): SessionResponse
 
+  def logout(traceId: String, token: String): SSOBaseResponse
+
   def touch(traceId: String, token: String): SessionResponse
 }
 
@@ -20,6 +22,7 @@ class SessionServiceImpl @Inject()(ssoClientService: SSOClientService) extends S
     ssoClientService.login(traceId, new LoginRequest(ip, request.dt, request.di, request.lat, request.lng, request.ctry, request.pro, request.c, request.cty, request.addr, request.ci, request.i, request.pwd))
   }
 
-  override def touch(traceId: String, token: String): SessionResponse = ssoClientService.touch(traceId, token)
+  override def logout(traceId: String, token: String): SSOBaseResponse = ssoClientService.logout(traceId, token)
 
+  override def touch(traceId: String, token: String): SessionResponse = ssoClientService.touch(traceId, token)
 }

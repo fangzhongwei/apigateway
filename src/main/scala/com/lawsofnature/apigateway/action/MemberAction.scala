@@ -3,7 +3,7 @@ package com.lawsofnature.apigateway.action
 import javax.inject.Inject
 
 import RpcMember.MemberResponse
-import com.lawsofnature.apigateway.annotations.Param
+import com.lawsofnature.apigateway.annotations.{ApiMapping, Param}
 import com.lawsofnature.apigateway.enumerate.ParamSource
 import com.lawsofnature.apigateway.response.ApiResponse
 import com.lawsofnature.apigateway.service.MemberService
@@ -20,6 +20,7 @@ trait MemberAction extends BaseAction {
 class MemberActionImpl @Inject()(memberService: MemberService) extends MemberAction {
   private val logger: Logger = LoggerFactory.getLogger(getClass)
 
+  @ApiMapping(id = 3001)
   override def getProfile(@Param(required = true, source = ParamSource.HEADER, name = "TI")
                           traceId: String): ApiResponse = {
     val memberResponse: MemberResponse = memberService.getMemberByMemberId(traceId, getMemberId)

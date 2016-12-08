@@ -47,7 +47,7 @@ object ActionInvoker {
                                    val max: Int,
                                    val errorCode: ErrorCode)
 
-  private val apiMap: mutable.Map[Int, (Method, Class[_], ApiMapping, scala.collection.mutable.Seq[ActionMethodParamAttribute])] = scala.collection.mutable.Map()
+  private val apiMap: mutable.Map[Int, (Method, Option[Class[_]], ApiMapping, scala.collection.mutable.Seq[ActionMethodParamAttribute])] = scala.collection.mutable.Map()
   //  private val apiCheckMap: mutable.Map[Int, (Method, Class[_], ApiMapping)] = scala.collection.mutable.Map()
 
   def initActionMap: Unit = {
@@ -93,7 +93,11 @@ object ActionInvoker {
                 System.exit(1)
               }
 
-              apiMap += (apiMapping.id() -> (method, types(actionMethodParamAttributeSeq.zipWithIndex.filter(_._1.source == ParamSource.BODY).head._2), apiMapping, actionMethodParamAttributeSeq))
+              val t: Option[Class[_]] = actionMethodParamAttributeSeq.zipWithIndex.filter(_._1.source == ParamSource.BODY).headOption match {
+                case Some(tuple) => Some(types(tuple._2))
+                case None => None
+              }
+              apiMap += (apiMapping.id() -> (method, t, apiMapping, actionMethodParamAttributeSeq))
           }
         }
       }
@@ -109,7 +113,7 @@ object ActionInvoker {
 
   val EMPTY = ""
 
-  def obtainParamValues(actionMethodParamAttributeSeq: mutable.Seq[ActionMethodParamAttribute], headers: Seq[HttpHeader], parameterMap: Map[String, String], body: String, salt: String, ignoreEDecrypt: Boolean, parseClass: Class[_]): Array[AnyRef] = {
+  def obtainParamValues(actionMethodParamAttributeSeq: mutable.Seq[ActionMethodParamAttribute], headers: Seq[HttpHeader], parameterMap: Map[String, String], body: String, salt: String, ignoreEDecrypt: Boolean, parseClass: Option[Class[_]]): Array[AnyRef] = {
     var strValue: String = null
     var intValue: Int = 0
     var longValue: Long = 0L
@@ -230,7 +234,7 @@ object ActionInvoker {
                 apiMap.get(actionIdStr.toInt) match {
                   case Some(tuple) =>
                     val method: Method = tuple._1
-                    val parseClass: Class[_] = tuple._2
+                    val parseClass: Option[Class[_]] = tuple._2
                     val apiMapping: ApiMapping = tuple._3
                     val actionMethodParamAttributeSeq: mutable.Seq[ActionMethodParamAttribute] = tuple._4
 
@@ -283,13 +287,17 @@ object ActionInvoker {
     }
   }
 
-  def parseRequest(body: String, salt: String, ignoreEDecrypt: Boolean, parseClass: Class[_]): AnyRef = {
+  def parseRequest(body: String, salt: String, ignoreEDecrypt: Boolean, parseClass: Option[Class[_]]): AnyRef = {
     val json: String = {
       ignoreEDecrypt match {
         case true => body
         case _ => DESUtils.decrypt(body, salt)
       }
     }
-    JsonHelper.read(json, parseClass)
+    val clazz:Class[_] = parseClass match {
+      case Some(c) => c
+      case None => throw ServiceException.make(ErrorCode.EC_SYSTEM_ERROR)
+    }
+    JsonHelper.read(json, clazz)
   }
 }

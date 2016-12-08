@@ -14,7 +14,7 @@ import com.google.inject.matcher.Matchers
 import com.google.inject.name.Names
 import com.google.inject.{AbstractModule, Binding, Guice, Key}
 import com.lawsofnatrue.common.ice.{ConfigHelper, IcePrxFactory, IcePrxFactoryImpl}
-import com.lawsofnature.apigateway.action.{RegisterAction, RegisterActionImpl, SSOAction, SSOActionImpl}
+import com.lawsofnature.apigateway.action._
 import com.lawsofnature.apigateway.service.{MemberService, MemberServiceImpl, SessionService, SessionServiceImpl}
 import com.lawsofnature.common.exception.ServiceException
 import com.lawsofnature.member.client.{MemberClientService, MemberClientServiceImpl}
@@ -57,6 +57,7 @@ object HttpService extends App {
       bind(classOf[SSOClientService]).to(classOf[SSOClientServiceImpl]).asEagerSingleton()
       bind(classOf[RegisterAction]).to(classOf[RegisterActionImpl]).asEagerSingleton()
       bind(classOf[SSOAction]).to(classOf[SSOActionImpl]).asEagerSingleton()
+      bind(classOf[MemberAction]).to(classOf[MemberActionImpl]).asEagerSingleton()
       //      bindInterceptor(Matchers.any(), Matchers.annotatedWith(classOf[ApiMapping]), apiMethodInterceptor)
       bindInterceptor(Matchers.any(), Matchers.any(), apiMethodInterceptor)
     }
