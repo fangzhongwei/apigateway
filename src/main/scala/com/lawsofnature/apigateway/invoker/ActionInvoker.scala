@@ -222,8 +222,8 @@ object ActionInvoker {
     else 99
   }
 
-  def invoke(sessionService: SessionService, headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte]): Future[String] = {
-    val promise: Promise[String] with Object = Promise[String]()
+  def invoke(sessionService: SessionService, headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte]): Future[Array[Byte]] = {
+    val promise: Promise[Array[Byte]] with Object = Promise[Array[Byte]]()
     Future {
       var traceId: String = null
       var salt: String = Constants.defaultDesKey
@@ -282,10 +282,10 @@ object ActionInvoker {
     promise.future
   }
 
-  def responseBody(apiResponse: ApiResponse, ignoreEDecrypt: Boolean, salt: String): String = {
+  def responseBody(apiResponse: ApiResponse, ignoreEDecrypt: Boolean, salt: String): Array[Byte] = {
     ignoreEDecrypt match {
-      case true => JsonHelper.writeValueAsString(apiResponse)
-      case _ => DESUtils.encrypt(JsonHelper.writeValueAsString(apiResponse), salt)
+      case true => GZipHelper.compress(JsonHelper.writeValueAsString(apiResponse).getBytes(StandardCharsets.UTF_8))
+      case _ => DESUtils.encrypt(GZipHelper.compress(JsonHelper.writeValueAsString(apiResponse).getBytes(StandardCharsets.UTF_8)), salt)
     }
   }
 

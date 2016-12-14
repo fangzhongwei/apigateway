@@ -32,4 +32,11 @@ object FuturePromise extends App {
   bos.flush()
   bos.close() // You may end up with 0 bytes file if not calling close.
 
+
+  def constructHttpData(json:String, key:String, ignoreEncrypt:Boolean): Array[Byte] = {
+    ignoreEncrypt match {
+      case true => GZipHelper.compress(json.getBytes(StandardCharsets.UTF_8))
+      case false => DESUtils.encrypt(GZipHelper.compress(json.getBytes(StandardCharsets.UTF_8)), Constants.defaultDesKey)
+    }
+  }
 }
