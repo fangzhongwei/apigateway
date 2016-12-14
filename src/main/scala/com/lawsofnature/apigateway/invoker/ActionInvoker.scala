@@ -1,6 +1,7 @@
 package com.lawsofnature.apigateway.invoker
 
 import java.lang.reflect.{InvocationTargetException, Method, Parameter}
+import java.nio.charset.StandardCharsets
 import java.util
 
 import RpcSSO.SessionResponse
@@ -15,7 +16,7 @@ import com.lawsofnature.apigateway.service.SessionService
 import com.lawsofnature.apigateway.validate.Validator
 import com.lawsofnature.common.edecrypt.DESUtils
 import com.lawsofnature.common.exception.{ErrorCode, ServiceException}
-import com.lawsofnature.common.helper.{JsonHelper, RegHelper}
+import com.lawsofnature.common.helper.{GZipHelper, JsonHelper, RegHelper}
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -113,7 +114,7 @@ object ActionInvoker {
 
   val EMPTY = ""
 
-  def obtainParamValues(actionMethodParamAttributeSeq: mutable.Seq[ActionMethodParamAttribute], headers: Seq[HttpHeader], parameterMap: Map[String, String], body: String, salt: String, ignoreEDecrypt: Boolean, parseClass: Option[Class[_]]): Array[AnyRef] = {
+  def obtainParamValues(actionMethodParamAttributeSeq: mutable.Seq[ActionMethodParamAttribute], headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte], salt: String, ignoreEDecrypt: Boolean, parseClass: Option[Class[_]]): Array[AnyRef] = {
     var strValue: String = null
     var intValue: Int = 0
     var longValue: Long = 0L
@@ -192,8 +193,9 @@ object ActionInvoker {
               if (max < longValue) throw ServiceException.make(attr.errorCode)
               longValue.asInstanceOf[AnyRef]
             case _ =>
-              if (attr.required && StringUtils.isBlank(body)) throw ServiceException.make(attr.errorCode)
-              val request: AnyRef = if (StringUtils.isNotBlank(body)) parseRequest(body, salt, ignoreEDecrypt, parseClass) else null
+              val bodyIsNull: Boolean = bodyArray == null || bodyArray.length == 0
+              if (attr.required && bodyIsNull) throw ServiceException.make(attr.errorCode)
+              val request: AnyRef = if (!bodyIsNull) parseRequest(bodyArray, salt, ignoreEDecrypt, parseClass) else null
               if (request != null) {
                 Validator.validate(request) match {
                   case Some(errorCode) => throw ServiceException.make(errorCode)
@@ -220,7 +222,7 @@ object ActionInvoker {
     else 99
   }
 
-  def invoke(sessionService: SessionService, headers: Seq[HttpHeader], parameterMap: Map[String, String], body: String): Future[String] = {
+  def invoke(sessionService: SessionService, headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte]): Future[String] = {
     val promise: Promise[String] with Object = Promise[String]()
     Future {
       var traceId: String = null
@@ -254,7 +256,7 @@ object ActionInvoker {
                         }
                       case _ =>
                     }
-                    val paramValues: Array[AnyRef] = obtainParamValues(actionMethodParamAttributeSeq, headers, parameterMap, body, salt, ignoreEDecrypt, parseClass)
+                    val paramValues: Array[AnyRef] = obtainParamValues(actionMethodParamAttributeSeq, headers, parameterMap, bodyArray, salt, ignoreEDecrypt, parseClass)
                     promise.success(responseBody(method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), paramValues: _*).asInstanceOf[ApiResponse], ignoreEDecrypt, salt))
                   case None => throw ServiceException.make(ErrorCode.EC_SYSTEM_ERROR)
                 }
@@ -287,11 +289,11 @@ object ActionInvoker {
     }
   }
 
-  def parseRequest(body: String, salt: String, ignoreEDecrypt: Boolean, parseClass: Option[Class[_]]): AnyRef = {
+  def parseRequest(bodyArray: Array[Byte], salt: String, ignoreEDecrypt: Boolean, parseClass: Option[Class[_]]): AnyRef = {
     val json: String = {
       ignoreEDecrypt match {
-        case true => body
-        case _ => DESUtils.decrypt(body, salt)
+        case true => new String(GZipHelper.uncompress(bodyArray), StandardCharsets.UTF_8)
+        case _ => new String(GZipHelper.uncompress(DESUtils.decrypt(bodyArray, salt)), StandardCharsets.UTF_8)
       }
     }
     val clazz:Class[_] = parseClass match {

@@ -2,8 +2,11 @@ package com.lawsofnature.apigateway.server
 
 import javax.inject.{Inject, Named}
 
+import akka.http.scaladsl.model.RequestEntity
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.ExceptionHandler
+import akka.stream.javadsl.Source
+import akka.util.ByteString
 import com.lawsofnature.apigateway.action.{RegisterAction, SSOAction}
 import com.lawsofnature.apigateway.invoker.ActionInvoker
 import com.lawsofnature.apigateway.service.SessionService
@@ -37,9 +40,9 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
         request =>
           parameterMap {
             paramMap => {
-              entity(as[String]) {
+              entity(as[ByteString]) {
                 body =>
-                  onSuccess(ActionInvoker.invoke(sessionService, request.headers, paramMap, body)) {
+                  onSuccess(ActionInvoker.invoke(sessionService, request.headers, paramMap, body.toArray)) {
                     case result =>
                       logger.info("call service cost : " + (System.currentTimeMillis() - millis))
                       complete(result)
