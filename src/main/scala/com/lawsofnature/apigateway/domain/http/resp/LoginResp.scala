@@ -142,7 +142,7 @@ object LoginResp extends com.trueaccord.scalapb.GeneratedMessageCompanion[com.la
       __fieldsMap.getOrElse(__fields.get(4), "").asInstanceOf[String]
     )
   }
-  def descriptor: _root_.com.google.protobuf.Descriptors.Descriptor = RespProto.descriptor.getMessageTypes.get(1)
+  def descriptor: _root_.com.google.protobuf.Descriptors.Descriptor = RespProto.descriptor.getMessageTypes.get(2)
   def messageCompanionForField(__field: _root_.com.google.protobuf.Descriptors.FieldDescriptor): _root_.com.trueaccord.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__field)
   def enumCompanionForField(__field: _root_.com.google.protobuf.Descriptors.FieldDescriptor): _root_.com.trueaccord.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__field)
   lazy val defaultInstance = com.lawsofnature.apigateway.domain.http.resp.LoginResp(

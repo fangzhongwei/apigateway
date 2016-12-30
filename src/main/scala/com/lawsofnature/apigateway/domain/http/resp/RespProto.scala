@@ -9,10 +9,11 @@ object RespProto {
   lazy val descriptor: com.google.protobuf.Descriptors.FileDescriptor = {
     val proto = com.google.protobuf.DescriptorProtos.FileDescriptorProto.parseFrom(
       com.trueaccord.scalapb.Encoding.fromBase64(scala.collection.Seq(
-  """CgpyZXNwLnByb3RvIl8KHVNlbmRMb2dpblZlcmlmaWNhdGlvbkNvZGVSZXNwEhIKBGNvZGUYASABKAlSBGNvZGUSEAoDbXNnG
-  AIgASgJUgNtc2cSGAoHY2hhbm5lbBgDIAEoBVIHY2hhbm5lbCJxCglMb2dpblJlc3ASEgoEY29kZRgBIAEoCVIEY29kZRIQCgNtc
-  2cYAiABKAlSA21zZxIUCgV0b2tlbhgDIAEoCVIFdG9rZW4SEAoDa2V5GAQgASgJUgNrZXkSFgoGbW9iaWxlGAUgASgJUgZtb2Jpb
-  GVCKQonY29tLmxhd3NvZm5hdHVyZS5hcGlnYXRld2F5LmRvbWFpbi5odHRwYgZwcm90bzM="""
+  """CgpyZXNwLnByb3RvIjkKEVNpbXBsZUFwaVJlc3BvbnNlEhIKBGNvZGUYASABKAlSBGNvZGUSEAoDbXNnGAIgASgJUgNtc2ciX
+  wodU2VuZExvZ2luVmVyaWZpY2F0aW9uQ29kZVJlc3ASEgoEY29kZRgBIAEoCVIEY29kZRIQCgNtc2cYAiABKAlSA21zZxIYCgdja
+  GFubmVsGAMgASgFUgdjaGFubmVsInEKCUxvZ2luUmVzcBISCgRjb2RlGAEgASgJUgRjb2RlEhAKA21zZxgCIAEoCVIDbXNnEhQKB
+  XRva2VuGAMgASgJUgV0b2tlbhIQCgNrZXkYBCABKAlSA2tleRIWCgZtb2JpbGUYBSABKAlSBm1vYmlsZUIpCidjb20ubGF3c29mb
+  mF0dXJlLmFwaWdhdGV3YXkuZG9tYWluLmh0dHBiBnByb3RvMw=="""
       ).mkString))
     com.google.protobuf.Descriptors.FileDescriptor.buildFrom(proto, Array(
     ))

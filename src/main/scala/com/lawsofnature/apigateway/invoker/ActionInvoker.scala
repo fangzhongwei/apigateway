@@ -1,22 +1,24 @@
 package com.lawsofnature.apigateway.invoker
 
 import java.lang.reflect.{InvocationTargetException, Method, Parameter}
-import java.nio.charset.StandardCharsets
 import java.util
 
 import RpcSSO.SessionResponse
 import akka.http.scaladsl.model.HttpHeader
 import com.lawsofnature.apigateway.annotations.{ApiMapping, Param}
 import com.lawsofnature.apigateway.conext.SessionContext
+import com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq
+import com.lawsofnature.apigateway.domain.http.resp.SimpleApiResponse
 import com.lawsofnature.apigateway.enumerate.ParamSource
 import com.lawsofnature.apigateway.helper.Constants
-import com.lawsofnature.apigateway.response.ApiResponse
 import com.lawsofnature.apigateway.server.HttpService
 import com.lawsofnature.apigateway.service.SessionService
 import com.lawsofnature.apigateway.validate.Validator
 import com.lawsofnature.common.edecrypt.DESUtils
 import com.lawsofnature.common.exception.{ErrorCode, ServiceException}
-import com.lawsofnature.common.helper.{GZipHelper, JsonHelper, RegHelper}
+import com.lawsofnature.common.helper.{GZipHelper, RegHelper}
+import com.trueaccord.scalapb.GeneratedMessage
+import com.typesafe.config.ConfigFactory
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -114,7 +116,7 @@ object ActionInvoker {
 
   val EMPTY = ""
 
-  def obtainParamValues(actionMethodParamAttributeSeq: mutable.Seq[ActionMethodParamAttribute], headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte], salt: String, ignoreEDecrypt: Boolean, parseClass: Option[Class[_]]): Array[AnyRef] = {
+  def obtainParamValues(actionMethodParamAttributeSeq: mutable.Seq[ActionMethodParamAttribute], headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte], salt: String, parseClass: Option[Class[_]]): Array[AnyRef] = {
     var strValue: String = null
     var intValue: Int = 0
     var longValue: Long = 0L
@@ -195,7 +197,7 @@ object ActionInvoker {
             case _ =>
               val bodyIsNull: Boolean = bodyArray == null || bodyArray.length == 0
               if (attr.required && bodyIsNull) throw ServiceException.make(attr.errorCode)
-              val request: AnyRef = if (!bodyIsNull) parseRequest(bodyArray, salt, ignoreEDecrypt, parseClass) else null
+              val request: AnyRef = if (!bodyIsNull) parseRequest(bodyArray, salt, parseClass) else null
               if (request != null) {
                 Validator.validate(request) match {
                   case Some(errorCode) => throw ServiceException.make(errorCode)
@@ -222,12 +224,11 @@ object ActionInvoker {
     else 99
   }
 
-  def invoke(sessionService: SessionService, headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte]): Future[Array[Byte]] = {
-    val promise: Promise[Array[Byte]] with Object = Promise[Array[Byte]]()
+  def invoke(sessionService: SessionService, headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte]): Future[(Boolean, Array[Byte])] = {
+    val promise: Promise[(Boolean, Array[Byte])] with Object = Promise[(Boolean, Array[Byte])]()
     Future {
       var traceId: String = null
-      var salt: String = Constants.defaultDesKey
-      var ignoreEDecrypt: Boolean = false
+      val salt: String = ConfigFactory.load().getString("edecrypt.default.des.key")
       try {
         extractValueFromHeaders(HEADER_ACTION_ID, headers) match {
           case Some(actionIdStr) =>
@@ -240,24 +241,21 @@ object ActionInvoker {
                     val apiMapping: ApiMapping = tuple._3
                     val actionMethodParamAttributeSeq: mutable.Seq[ActionMethodParamAttribute] = tuple._4
 
-                    ignoreEDecrypt = apiMapping.ignoreEDecrypt()
-                    val ignoreSession: Boolean = apiMapping.ignoreSession()
-
-                    ignoreSession match {
+                    apiMapping.ignoreSession() match {
                       case false =>
                         extractValueFromHeaders(HEADER_TOKEN, headers) match {
                           case Some(token) => val sessionResponse: SessionResponse = sessionService.touch(traceId, token)
-                            SessionContext.set(sessionResponse)
                             sessionResponse.success match {
-                              case true => salt = sessionResponse.salt
-                              case _ => throw ServiceException.make(ErrorCode.get(sessionResponse.code))
+                              case true => SessionContext.set(sessionResponse)
+                              case _ => throw ServiceException.make(ErrorCode.get(""))
                             }
                           case None => throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
                         }
                       case _ =>
                     }
-                    val paramValues: Array[AnyRef] = obtainParamValues(actionMethodParamAttributeSeq, headers, parameterMap, bodyArray, salt, ignoreEDecrypt, parseClass)
-                    promise.success(responseBody(method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), paramValues: _*).asInstanceOf[ApiResponse], ignoreEDecrypt, salt))
+
+                    val paramValues: Array[AnyRef] = obtainParamValues(actionMethodParamAttributeSeq, headers, parameterMap, bodyArray, salt, parseClass)
+                    promise.success((true, responseBody(method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), paramValues: _*).asInstanceOf[GeneratedMessage], salt)))
                   case None => throw ServiceException.make(ErrorCode.EC_SYSTEM_ERROR)
                 }
               case None => throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
@@ -268,13 +266,13 @@ object ActionInvoker {
       } catch {
         case se: ServiceException =>
           logger.error(traceId, se)
-          promise.success(responseBody(ApiResponse.makeErrorResponse(se.getErrorCode), ignoreEDecrypt, salt))
+          promise.success((false, responseBody(SimpleApiResponse(code = se.getErrorCode.getCode, se.getErrorCode.getDesc), salt)))
         case ite: InvocationTargetException =>
           logger.error(traceId, ite)
-          promise.success(responseBody(ApiResponse.makeErrorResponse(ErrorCode.EC_SYSTEM_ERROR), ignoreEDecrypt, salt))
+          promise.success((false, responseBody(SimpleApiResponse(code = ErrorCode.EC_SYSTEM_ERROR.getCode, ErrorCode.EC_SYSTEM_ERROR.getDesc), salt)))
         case e: Exception =>
           logger.error(traceId, e)
-          promise.success(responseBody(ApiResponse.makeErrorResponse(ErrorCode.EC_SYSTEM_ERROR), ignoreEDecrypt, salt))
+          promise.success((false, responseBody(SimpleApiResponse(code = ErrorCode.EC_SYSTEM_ERROR.getCode, ErrorCode.EC_SYSTEM_ERROR.getDesc), salt)))
       } finally {
         SessionContext.clear
       }
@@ -282,24 +280,22 @@ object ActionInvoker {
     promise.future
   }
 
-  def responseBody(apiResponse: ApiResponse, ignoreEDecrypt: Boolean, salt: String): Array[Byte] = {
-    ignoreEDecrypt match {
-      case true => GZipHelper.compress(JsonHelper.writeValueAsString(apiResponse).getBytes(StandardCharsets.UTF_8))
-      case _ => DESUtils.encrypt(GZipHelper.compress(JsonHelper.writeValueAsString(apiResponse).getBytes(StandardCharsets.UTF_8)), salt)
-    }
+  def responseBody(message: GeneratedMessage, salt: String): Array[Byte] = {
+    DESUtils.encrypt(GZipHelper.compress(message.toByteArray), salt)
   }
 
-  def parseRequest(bodyArray: Array[Byte], salt: String, ignoreEDecrypt: Boolean, parseClass: Option[Class[_]]): AnyRef = {
-    val json: String = {
-      ignoreEDecrypt match {
-        case true => new String(GZipHelper.uncompress(bodyArray), StandardCharsets.UTF_8)
-        case _ => new String(GZipHelper.uncompress(DESUtils.decrypt(bodyArray, salt)), StandardCharsets.UTF_8)
-      }
-    }
-    val clazz:Class[_] = parseClass match {
+  def parseRequest(bodyArray: Array[Byte], salt: String, parseClass: Option[Class[_]]): AnyRef = {
+    val protoArray: Array[Byte] = GZipHelper.uncompress(DESUtils.decrypt(bodyArray, salt))
+
+    val clazz: Class[_] = parseClass match {
       case Some(c) => c
       case None => throw ServiceException.make(ErrorCode.EC_SYSTEM_ERROR)
     }
-    JsonHelper.read(json, clazz)
+
+    clazz.getName match {
+      case "com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq" =>
+        SendLoginVerificationCodeReq.parseFrom(protoArray)
+      case _ => throw ServiceException.make(ErrorCode.EC_SYSTEM_ERROR)
+    }
   }
 }

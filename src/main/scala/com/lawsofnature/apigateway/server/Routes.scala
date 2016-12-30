@@ -2,12 +2,14 @@ package com.lawsofnature.apigateway.server
 
 import javax.inject.{Inject, Named}
 
-import akka.http.scaladsl.model.RequestEntity
+import akka.http.scaladsl.model.HttpHeader.ParsingResult
+import akka.http.scaladsl.model.headers.RawHeader
+import akka.http.scaladsl.model.{HttpEntity, HttpHeader, RequestEntity}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.ExceptionHandler
 import akka.stream.javadsl.Source
 import akka.util.ByteString
-import com.lawsofnature.apigateway.action.{RegisterAction, SSOAction}
+import com.lawsofnature.apigateway.action.SSOAction
 import com.lawsofnature.apigateway.invoker.ActionInvoker
 import com.lawsofnature.apigateway.service.SessionService
 import org.slf4j.{Logger, LoggerFactory}
@@ -18,7 +20,7 @@ import scala.concurrent.duration._
   * Created by kgoralski on 2016-05-02.
   */
 @Named
-class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, sessionService: SessionService) {
+class Routes @Inject()(ssoAction: SSOAction, sessionService: SessionService) {
   val logger: Logger = LoggerFactory.getLogger(getClass)
   implicit val timeout = (90 seconds)
 
@@ -45,7 +47,12 @@ class Routes @Inject()(registerAction: RegisterAction, ssoAction: SSOAction, ses
                   onSuccess(ActionInvoker.invoke(sessionService, request.headers, paramMap, body.toArray)) {
                     case result =>
                       logger.info("call service cost : " + (System.currentTimeMillis() - millis))
-                      complete(result)
+                      val headers = List(
+                        RawHeader("NORMAL", result._1.toString)
+                      )
+                      respondWithHeaders(headers) {
+                        complete(result._2)
+                      }
                   }
               }
             }

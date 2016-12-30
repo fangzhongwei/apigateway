@@ -16,13 +16,15 @@ import com.lawsofnature.common.exception.ErrorCode
 trait SSOAction {
   def login(traceId: String, ip: String, request: AppLoginRequest): ApiResponse
 
+//  def autoLogin(traceId: String, ip: String, request: AppLoginRequest): ApiResponse
+
   def logout(traceId: String): ApiResponse
 }
 
-class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction with BaseAction{
+class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction with BaseAction {
 
-  @ApiMapping(id = 2001, ignoreSession = true)
-  override def login(@Param(required = true, source = ParamSource.HEADER, name = "TI")
+  @ApiMapping(id = 1002, ignoreSession = true)
+  override def login(@Param(required = true, source = ParamSource.HEADER, name = "traceId")
                      traceId: String,
                      @Param(required = true, source = ParamSource.HEADER, name = "X-Real-Ip")
                      ip: String,
@@ -31,17 +33,17 @@ class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction 
     val sessionResponse: SessionResponse = sessionService.login(traceId, ip, request)
     sessionResponse.success match {
       case true => ApiResponse.make(data = sessionResponse)
-      case _ => ApiResponse.makeErrorResponse(ErrorCode.get(sessionResponse.code))
+      case _ => ApiResponse.makeErrorResponse(ErrorCode.get(""))
     }
   }
 
-  @ApiMapping(id = 2002)
-  override def logout(@Param(required = true, source = ParamSource.HEADER, name = "TI")
+  @ApiMapping(id = 1003)
+  override def logout(@Param(required = true, source = ParamSource.HEADER, name = "traceId")
                       traceId: String): ApiResponse = {
     val response: SSOBaseResponse = sessionService.logout(traceId, getSession.token)
     response.success match {
       case true => ApiResponse.makeSuccessResponse(SuccessResponse.SUCCESS)
-      case false => ApiResponse.makeErrorResponse(ErrorCode.get(response.code))
+      case false => ApiResponse.makeErrorResponse(ErrorCode.get(""))
     }
   }
 }

@@ -4,7 +4,6 @@ version := "1.0"
 
 javacOptions ++= Seq("-encoding", "UTF-8")
 
-//scalaVersion := "2.12.0"
 scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
@@ -20,6 +19,7 @@ libraryDependencies ++= Seq(
   "com.fasterxml.jackson.module" % "jackson-module-scala_2.11" % "2.8.4",
   "commons-lang" % "commons-lang" % "2.6",
   "javax.validation" % "validation-api" % "1.1.0.Final",
+  "com.google.protobuf" % "protobuf-java" % "3.0.0",
   "org.scala-lang" % "scala-library" % "2.11.8"
 )
 
@@ -29,6 +29,11 @@ libraryDependencies += "com.lawsofnature.common" % "common-error_2.11" % "1.0"
 libraryDependencies += "com.lawsofnature.common" % "common-edecrypt_2.11" % "1.0"
 libraryDependencies += "com.lawsofnature.client" % "ssoclient_2.11" % "1.0"
 libraryDependencies += "com.lawsofnature.common" % "common-utils_2.11" % "1.0"
+libraryDependencies += "com.lawsofnature.sms" % "smsclient_2.11" % "1.0"
+
+// https://mvnrepository.com/artifact/com.trueaccord.scalapb/scalapb-runtime_2.11
+libraryDependencies += "com.trueaccord.scalapb" % "scalapb-runtime_2.11" % "0.5.46"
+
 
 
 

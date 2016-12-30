@@ -46,13 +46,13 @@ case class RegisterRequest(@Validate(required = true, maxLength = 10, error = EC
                            dt: Int,
                            @Validate(required = true, maxLength = 128, error = EC_INVALID_REQUEST)
                            di: String,
-                           @Validate(required = true, maxLength = 64, error = EC_UC_USERNAME_LENGTH_LIMIT)
+                           @Validate(required = true, maxLength = 64, error = EC_INVALID_REQUEST)
                            un: String,
                            @Validate(required = true, min = 0, max = 2, error = EC_INVALID_REQUEST)
                            pid: Int,
-                           @Validate(required = true, maxLength = 64, error = EC_UC_USERNAME_LENGTH_LIMIT)
+                           @Validate(required = true, maxLength = 64, error = EC_INVALID_REQUEST)
                            i: String,
-                           @Validate(required = true, minLength = 7, maxLength = 16, error = EC_UC_USERNAME_LENGTH_LIMIT)
+                           @Validate(required = true, minLength = 7, maxLength = 16, error = EC_INVALID_REQUEST)
                            pwd: String)
 
 
@@ -87,7 +87,7 @@ case class AppLoginRequest(@Validate(required = true, min = 1, max = 10, error =
                            c: String,
                            cty: String,
                            addr: String,
-                           @Validate(required = true, maxLength = 64, error = EC_UC_USERNAME_LENGTH_LIMIT)
+                           @Validate(required = true, maxLength = 64, error = EC_INVALID_REQUEST)
                            i: String,
                            @Validate(required = true, maxLength = 256, error = EC_INVALID_REQUEST)
                            pwd: String)

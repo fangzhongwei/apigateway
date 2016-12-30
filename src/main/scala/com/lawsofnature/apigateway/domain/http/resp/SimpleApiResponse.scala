@@ -6,18 +6,16 @@
 package com.lawsofnature.apigateway.domain.http.resp
 
 @SerialVersionUID(0L)
-final case class SendLoginVerificationCodeResp(
+final case class SimpleApiResponse(
     code: String = "",
-    msg: String = "",
-    channel: Int = 0
-    ) extends com.trueaccord.scalapb.GeneratedMessage with com.trueaccord.scalapb.Message[SendLoginVerificationCodeResp] with com.trueaccord.lenses.Updatable[SendLoginVerificationCodeResp] {
+    msg: String = ""
+    ) extends com.trueaccord.scalapb.GeneratedMessage with com.trueaccord.scalapb.Message[SimpleApiResponse] with com.trueaccord.lenses.Updatable[SimpleApiResponse] {
     @transient
     private[this] var __serializedSizeCachedValue: Int = 0
     private[this] def __computeSerializedValue(): Int = {
       var __size = 0
       if (code != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(1, code) }
       if (msg != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(2, msg) }
-      if (channel != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeInt32Size(3, channel) }
       __size
     }
     final override def serializedSize: Int = {
@@ -41,17 +39,10 @@ final case class SendLoginVerificationCodeResp(
           _output__.writeString(2, __v)
         }
       };
-      {
-        val __v = channel
-        if (__v != 0) {
-          _output__.writeInt32(3, __v)
-        }
-      };
     }
-    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): com.lawsofnature.apigateway.domain.http.resp.SendLoginVerificationCodeResp = {
+    def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): com.lawsofnature.apigateway.domain.http.resp.SimpleApiResponse = {
       var __code = this.code
       var __msg = this.msg
-      var __channel = this.channel
       var _done__ = false
       while (!_done__) {
         val _tag__ = _input__.readTag()
@@ -61,20 +52,16 @@ final case class SendLoginVerificationCodeResp(
             __code = _input__.readString()
           case 18 =>
             __msg = _input__.readString()
-          case 24 =>
-            __channel = _input__.readInt32()
           case tag => _input__.skipField(tag)
         }
       }
-      com.lawsofnature.apigateway.domain.http.resp.SendLoginVerificationCodeResp(
+      com.lawsofnature.apigateway.domain.http.resp.SimpleApiResponse(
           code = __code,
-          msg = __msg,
-          channel = __channel
+          msg = __msg
       )
     }
-    def withCode(__v: String): SendLoginVerificationCodeResp = copy(code = __v)
-    def withMsg(__v: String): SendLoginVerificationCodeResp = copy(msg = __v)
-    def withChannel(__v: Int): SendLoginVerificationCodeResp = copy(channel = __v)
+    def withCode(__v: String): SimpleApiResponse = copy(code = __v)
+    def withMsg(__v: String): SimpleApiResponse = copy(msg = __v)
     def getField(__field: _root_.com.google.protobuf.Descriptors.FieldDescriptor): scala.Any = {
       __field.getNumber match {
         case 1 => {
@@ -85,38 +72,31 @@ final case class SendLoginVerificationCodeResp(
           val __t = msg
           if (__t != "") __t else null
         }
-        case 3 => {
-          val __t = channel
-          if (__t != 0) __t else null
-        }
       }
     }
     override def toString: String = _root_.com.trueaccord.scalapb.TextFormat.printToUnicodeString(this)
-    def companion = com.lawsofnature.apigateway.domain.http.resp.SendLoginVerificationCodeResp
+    def companion = com.lawsofnature.apigateway.domain.http.resp.SimpleApiResponse
 }
 
-object SendLoginVerificationCodeResp extends com.trueaccord.scalapb.GeneratedMessageCompanion[com.lawsofnature.apigateway.domain.http.resp.SendLoginVerificationCodeResp] {
-  implicit def messageCompanion: com.trueaccord.scalapb.GeneratedMessageCompanion[com.lawsofnature.apigateway.domain.http.resp.SendLoginVerificationCodeResp] = this
-  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): com.lawsofnature.apigateway.domain.http.resp.SendLoginVerificationCodeResp = {
+object SimpleApiResponse extends com.trueaccord.scalapb.GeneratedMessageCompanion[com.lawsofnature.apigateway.domain.http.resp.SimpleApiResponse] {
+  implicit def messageCompanion: com.trueaccord.scalapb.GeneratedMessageCompanion[com.lawsofnature.apigateway.domain.http.resp.SimpleApiResponse] = this
+  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): com.lawsofnature.apigateway.domain.http.resp.SimpleApiResponse = {
     require(__fieldsMap.keys.forall(_.getContainingType() == descriptor), "FieldDescriptor does not match message type.")
     val __fields = descriptor.getFields
-    com.lawsofnature.apigateway.domain.http.resp.SendLoginVerificationCodeResp(
+    com.lawsofnature.apigateway.domain.http.resp.SimpleApiResponse(
       __fieldsMap.getOrElse(__fields.get(0), "").asInstanceOf[String],
-      __fieldsMap.getOrElse(__fields.get(1), "").asInstanceOf[String],
-      __fieldsMap.getOrElse(__fields.get(2), 0).asInstanceOf[Int]
+      __fieldsMap.getOrElse(__fields.get(1), "").asInstanceOf[String]
     )
   }
-  def descriptor: _root_.com.google.protobuf.Descriptors.Descriptor = RespProto.descriptor.getMessageTypes.get(1)
+  def descriptor: _root_.com.google.protobuf.Descriptors.Descriptor = RespProto.descriptor.getMessageTypes.get(0)
   def messageCompanionForField(__field: _root_.com.google.protobuf.Descriptors.FieldDescriptor): _root_.com.trueaccord.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__field)
   def enumCompanionForField(__field: _root_.com.google.protobuf.Descriptors.FieldDescriptor): _root_.com.trueaccord.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__field)
-  lazy val defaultInstance = com.lawsofnature.apigateway.domain.http.resp.SendLoginVerificationCodeResp(
+  lazy val defaultInstance = com.lawsofnature.apigateway.domain.http.resp.SimpleApiResponse(
   )
-  implicit class SendLoginVerificationCodeRespLens[UpperPB](_l: _root_.com.trueaccord.lenses.Lens[UpperPB, com.lawsofnature.apigateway.domain.http.resp.SendLoginVerificationCodeResp]) extends _root_.com.trueaccord.lenses.ObjectLens[UpperPB, com.lawsofnature.apigateway.domain.http.resp.SendLoginVerificationCodeResp](_l) {
+  implicit class SimpleApiResponseLens[UpperPB](_l: _root_.com.trueaccord.lenses.Lens[UpperPB, com.lawsofnature.apigateway.domain.http.resp.SimpleApiResponse]) extends _root_.com.trueaccord.lenses.ObjectLens[UpperPB, com.lawsofnature.apigateway.domain.http.resp.SimpleApiResponse](_l) {
     def code: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.code)((c_, f_) => c_.copy(code = f_))
     def msg: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.msg)((c_, f_) => c_.copy(msg = f_))
-    def channel: _root_.com.trueaccord.lenses.Lens[UpperPB, Int] = field(_.channel)((c_, f_) => c_.copy(channel = f_))
   }
   final val CODE_FIELD_NUMBER = 1
   final val MSG_FIELD_NUMBER = 2
-  final val CHANNEL_FIELD_NUMBER = 3
 }

@@ -15,9 +15,10 @@ import com.google.inject.name.Names
 import com.google.inject.{AbstractModule, Binding, Guice, Key}
 import com.lawsofnatrue.common.ice.{ConfigHelper, IcePrxFactory, IcePrxFactoryImpl}
 import com.lawsofnature.apigateway.action._
-import com.lawsofnature.apigateway.service.{MemberService, MemberServiceImpl, SessionService, SessionServiceImpl}
+import com.lawsofnature.apigateway.service._
 import com.lawsofnature.common.exception.ServiceException
 import com.lawsofnature.member.client.{MemberClientService, MemberClientServiceImpl}
+import com.lawsofnature.sms.client.{SmsClientService, SmsClientServiceImpl}
 import com.lawsofnature.sso.client.{SSOClientService, SSOClientServiceImpl}
 import com.typesafe.config.ConfigFactory
 import org.aopalliance.intercept.{MethodInterceptor, MethodInvocation}
@@ -51,13 +52,14 @@ object HttpService extends App {
       val map: util.HashMap[String, String] = ConfigHelper.configMap
       Names.bindProperties(binder(), map)
       bind(classOf[MemberService]).to(classOf[MemberServiceImpl]).asEagerSingleton()
+      bind(classOf[SmsService]).to(classOf[SmsServiceImpl]).asEagerSingleton()
       bind(classOf[SessionService]).to(classOf[SessionServiceImpl]).asEagerSingleton()
       bind(classOf[IcePrxFactory]).to(classOf[IcePrxFactoryImpl]).asEagerSingleton()
       bind(classOf[MemberClientService]).to(classOf[MemberClientServiceImpl]).asEagerSingleton()
       bind(classOf[SSOClientService]).to(classOf[SSOClientServiceImpl]).asEagerSingleton()
-      bind(classOf[RegisterAction]).to(classOf[RegisterActionImpl]).asEagerSingleton()
+      bind(classOf[SmsClientService]).to(classOf[SmsClientServiceImpl]).asEagerSingleton()
+      bind(classOf[SmsAction]).to(classOf[SmsActionImpl]).asEagerSingleton()
       bind(classOf[SSOAction]).to(classOf[SSOActionImpl]).asEagerSingleton()
-      bind(classOf[MemberAction]).to(classOf[MemberActionImpl]).asEagerSingleton()
       //      bindInterceptor(Matchers.any(), Matchers.annotatedWith(classOf[ApiMapping]), apiMethodInterceptor)
       bindInterceptor(Matchers.any(), Matchers.any(), apiMethodInterceptor)
     }
@@ -81,8 +83,8 @@ object HttpService extends App {
   }
 
   com.lawsofnature.apigateway.invoker.ActionInvoker.initActionMap
-  injector.getInstance(classOf[MemberClientService]).initClient
-  injector.getInstance(classOf[SSOClientService]).initClient
+//  injector.getInstance(classOf[MemberClientService]).initClient
+//  injector.getInstance(classOf[SSOClientService]).initClient
 
   implicit val system: ActorSystem = ActorSystem("http-system")
   implicit val materializer = ActorMaterializer()

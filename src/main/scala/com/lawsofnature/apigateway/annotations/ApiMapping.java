@@ -13,7 +13,5 @@ import java.lang.annotation.Target;
 public @interface ApiMapping {
     int id() default -1;
 
-    boolean ignoreEDecrypt() default false;
-
     boolean ignoreSession() default false;
 }
