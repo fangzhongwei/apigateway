@@ -1,5 +1,11 @@
 syntax = "proto3";
 option java_package = "com.lawsofnature.apigateway.domain.http";
+
+message SimpleApiResponse {
+    string code = 1;
+    string msg = 2;
+}
+
 message SendLoginVerificationCodeResp {
     string code = 1;
     string msg = 2;
