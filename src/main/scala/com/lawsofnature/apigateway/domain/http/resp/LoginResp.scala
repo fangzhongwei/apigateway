@@ -10,6 +10,7 @@ final case class LoginResp(
     code: String = "",
     token: String = "",
     mobile: String = "",
+    status: Int = 0,
     nickName: String = "",
     ext1: String = "",
     ext2: String = "",
@@ -24,12 +25,13 @@ final case class LoginResp(
       if (code != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(1, code) }
       if (token != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(2, token) }
       if (mobile != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(3, mobile) }
-      if (nickName != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(4, nickName) }
-      if (ext1 != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(5, ext1) }
-      if (ext2 != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(6, ext2) }
-      if (ext3 != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(7, ext3) }
-      if (ext4 != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(8, ext4) }
-      if (ext5 != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(9, ext5) }
+      if (status != 0) { __size += _root_.com.google.protobuf.CodedOutputStream.computeInt32Size(4, status) }
+      if (nickName != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(5, nickName) }
+      if (ext1 != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(6, ext1) }
+      if (ext2 != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(7, ext2) }
+      if (ext3 != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(8, ext3) }
+      if (ext4 != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(9, ext4) }
+      if (ext5 != "") { __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(10, ext5) }
       __size
     }
     final override def serializedSize: Int = {
@@ -60,39 +62,45 @@ final case class LoginResp(
         }
       };
       {
-        val __v = nickName
-        if (__v != "") {
-          _output__.writeString(4, __v)
+        val __v = status
+        if (__v != 0) {
+          _output__.writeInt32(4, __v)
         }
       };
       {
-        val __v = ext1
+        val __v = nickName
         if (__v != "") {
           _output__.writeString(5, __v)
         }
       };
       {
-        val __v = ext2
+        val __v = ext1
         if (__v != "") {
           _output__.writeString(6, __v)
         }
       };
       {
-        val __v = ext3
+        val __v = ext2
         if (__v != "") {
           _output__.writeString(7, __v)
         }
       };
       {
-        val __v = ext4
+        val __v = ext3
         if (__v != "") {
           _output__.writeString(8, __v)
         }
       };
       {
-        val __v = ext5
+        val __v = ext4
         if (__v != "") {
           _output__.writeString(9, __v)
+        }
+      };
+      {
+        val __v = ext5
+        if (__v != "") {
+          _output__.writeString(10, __v)
         }
       };
     }
@@ -100,6 +108,7 @@ final case class LoginResp(
       var __code = this.code
       var __token = this.token
       var __mobile = this.mobile
+      var __status = this.status
       var __nickName = this.nickName
       var __ext1 = this.ext1
       var __ext2 = this.ext2
@@ -117,17 +126,19 @@ final case class LoginResp(
             __token = _input__.readString()
           case 26 =>
             __mobile = _input__.readString()
-          case 34 =>
-            __nickName = _input__.readString()
+          case 32 =>
+            __status = _input__.readInt32()
           case 42 =>
-            __ext1 = _input__.readString()
+            __nickName = _input__.readString()
           case 50 =>
-            __ext2 = _input__.readString()
+            __ext1 = _input__.readString()
           case 58 =>
-            __ext3 = _input__.readString()
+            __ext2 = _input__.readString()
           case 66 =>
-            __ext4 = _input__.readString()
+            __ext3 = _input__.readString()
           case 74 =>
+            __ext4 = _input__.readString()
+          case 82 =>
             __ext5 = _input__.readString()
           case tag => _input__.skipField(tag)
         }
@@ -136,6 +147,7 @@ final case class LoginResp(
           code = __code,
           token = __token,
           mobile = __mobile,
+          status = __status,
           nickName = __nickName,
           ext1 = __ext1,
           ext2 = __ext2,
@@ -147,6 +159,7 @@ final case class LoginResp(
     def withCode(__v: String): LoginResp = copy(code = __v)
     def withToken(__v: String): LoginResp = copy(token = __v)
     def withMobile(__v: String): LoginResp = copy(mobile = __v)
+    def withStatus(__v: Int): LoginResp = copy(status = __v)
     def withNickName(__v: String): LoginResp = copy(nickName = __v)
     def withExt1(__v: String): LoginResp = copy(ext1 = __v)
     def withExt2(__v: String): LoginResp = copy(ext2 = __v)
@@ -168,26 +181,30 @@ final case class LoginResp(
           if (__t != "") __t else null
         }
         case 4 => {
+          val __t = status
+          if (__t != 0) __t else null
+        }
+        case 5 => {
           val __t = nickName
           if (__t != "") __t else null
         }
-        case 5 => {
+        case 6 => {
           val __t = ext1
           if (__t != "") __t else null
         }
-        case 6 => {
+        case 7 => {
           val __t = ext2
           if (__t != "") __t else null
         }
-        case 7 => {
+        case 8 => {
           val __t = ext3
           if (__t != "") __t else null
         }
-        case 8 => {
+        case 9 => {
           val __t = ext4
           if (__t != "") __t else null
         }
-        case 9 => {
+        case 10 => {
           val __t = ext5
           if (__t != "") __t else null
         }
@@ -206,12 +223,13 @@ object LoginResp extends com.trueaccord.scalapb.GeneratedMessageCompanion[com.la
       __fieldsMap.getOrElse(__fields.get(0), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(1), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(2), "").asInstanceOf[String],
-      __fieldsMap.getOrElse(__fields.get(3), "").asInstanceOf[String],
+      __fieldsMap.getOrElse(__fields.get(3), 0).asInstanceOf[Int],
       __fieldsMap.getOrElse(__fields.get(4), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(5), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(6), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(7), "").asInstanceOf[String],
-      __fieldsMap.getOrElse(__fields.get(8), "").asInstanceOf[String]
+      __fieldsMap.getOrElse(__fields.get(8), "").asInstanceOf[String],
+      __fieldsMap.getOrElse(__fields.get(9), "").asInstanceOf[String]
     )
   }
   def descriptor: _root_.com.google.protobuf.Descriptors.Descriptor = RespProto.descriptor.getMessageTypes.get(2)
@@ -223,6 +241,7 @@ object LoginResp extends com.trueaccord.scalapb.GeneratedMessageCompanion[com.la
     def code: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.code)((c_, f_) => c_.copy(code = f_))
     def token: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.token)((c_, f_) => c_.copy(token = f_))
     def mobile: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.mobile)((c_, f_) => c_.copy(mobile = f_))
+    def status: _root_.com.trueaccord.lenses.Lens[UpperPB, Int] = field(_.status)((c_, f_) => c_.copy(status = f_))
     def nickName: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.nickName)((c_, f_) => c_.copy(nickName = f_))
     def ext1: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.ext1)((c_, f_) => c_.copy(ext1 = f_))
     def ext2: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.ext2)((c_, f_) => c_.copy(ext2 = f_))
@@ -233,10 +252,11 @@ object LoginResp extends com.trueaccord.scalapb.GeneratedMessageCompanion[com.la
   final val CODE_FIELD_NUMBER = 1
   final val TOKEN_FIELD_NUMBER = 2
   final val MOBILE_FIELD_NUMBER = 3
-  final val NICKNAME_FIELD_NUMBER = 4
-  final val EXT1_FIELD_NUMBER = 5
-  final val EXT2_FIELD_NUMBER = 6
-  final val EXT3_FIELD_NUMBER = 7
-  final val EXT4_FIELD_NUMBER = 8
-  final val EXT5_FIELD_NUMBER = 9
+  final val STATUS_FIELD_NUMBER = 4
+  final val NICKNAME_FIELD_NUMBER = 5
+  final val EXT1_FIELD_NUMBER = 6
+  final val EXT2_FIELD_NUMBER = 7
+  final val EXT3_FIELD_NUMBER = 8
+  final val EXT4_FIELD_NUMBER = 9
+  final val EXT5_FIELD_NUMBER = 10
 }

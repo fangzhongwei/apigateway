@@ -41,6 +41,7 @@ class SessionServiceImpl @Inject()(edClientService: EdClientService, ssoClientSe
                 LoginResp(code = "0",
                   token = sessionResponse.token,
                   mobile = sessionResponse.identity,
+                  status = memberResponse.status,
                   nickName = memberResponse.nickName)
               case _ =>
                 LoginResp(code = memberResponse.code)
@@ -64,6 +65,7 @@ class SessionServiceImpl @Inject()(edClientService: EdClientService, ssoClientSe
         LoginResp(code = "0",
           token = session.token,
           mobile = session.identity,
+          status = memberResponse.status,
           nickName = memberResponse.nickName)
       case _ =>
         LoginResp(code = memberResponse.code)
