@@ -17,6 +17,7 @@ import com.lawsofnatrue.common.ice.{ConfigHelper, IcePrxFactory, IcePrxFactoryIm
 import com.lawsofnature.apigateway.action._
 import com.lawsofnature.apigateway.service._
 import com.lawsofnature.common.exception.ServiceException
+import com.lawsofnature.edcenter.client.{EdClientService, EdClientServiceImpl}
 import com.lawsofnature.member.client.{MemberClientService, MemberClientServiceImpl}
 import com.lawsofnature.sms.client.{SmsClientService, SmsClientServiceImpl}
 import com.lawsofnature.sso.client.{SSOClientService, SSOClientServiceImpl}
@@ -60,6 +61,7 @@ object HttpService extends App {
       bind(classOf[SmsClientService]).to(classOf[SmsClientServiceImpl]).asEagerSingleton()
       bind(classOf[SmsAction]).to(classOf[SmsActionImpl]).asEagerSingleton()
       bind(classOf[SSOAction]).to(classOf[SSOActionImpl]).asEagerSingleton()
+      bind(classOf[EdClientService]).to(classOf[EdClientServiceImpl]).asEagerSingleton()
       //      bindInterceptor(Matchers.any(), Matchers.annotatedWith(classOf[ApiMapping]), apiMethodInterceptor)
       bindInterceptor(Matchers.any(), Matchers.any(), apiMethodInterceptor)
     }

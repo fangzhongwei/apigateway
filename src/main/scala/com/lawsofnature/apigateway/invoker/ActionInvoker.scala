@@ -51,7 +51,6 @@ object ActionInvoker {
                                    val errorCode: ErrorCode)
 
   private val apiMap: mutable.Map[Int, (Method, Option[Class[_]], ApiMapping, scala.collection.mutable.Seq[ActionMethodParamAttribute])] = scala.collection.mutable.Map()
-  //  private val apiCheckMap: mutable.Map[Int, (Method, Class[_], ApiMapping)] = scala.collection.mutable.Map()
 
   def initActionMap: Unit = {
     val classList: util.ArrayList[Class[_]] = HttpService.actionBeanClassList
@@ -234,6 +233,7 @@ object ActionInvoker {
           case Some(actionIdStr) =>
             extractValueFromHeaders(HEADER_TRACE_ID, headers) match {
               case Some(ti) => traceId = ti
+                if (traceId.length != 32) throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
                 apiMap.get(actionIdStr.toInt) match {
                   case Some(tuple) =>
                     val method: Method = tuple._1
@@ -245,9 +245,9 @@ object ActionInvoker {
                       case false =>
                         extractValueFromHeaders(HEADER_TOKEN, headers) match {
                           case Some(token) => val sessionResponse: SessionResponse = sessionService.touch(traceId, token)
-                            sessionResponse.success match {
-                              case true => SessionContext.set(sessionResponse)
-                              case _ => throw ServiceException.make(ErrorCode.get(""))
+                            sessionResponse.code match {
+                              case "0" => SessionContext.set(sessionResponse)
+                              case _ => throw ServiceException.make(ErrorCode.get(sessionResponse.code))
                             }
                           case None => throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
                         }
