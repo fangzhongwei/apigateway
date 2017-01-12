@@ -3,9 +3,9 @@
 //
 // Protofile syntax: PROTO3
 
-package com.lawsofnature.apigateway.domain.http.req
+package com.lawsofnature.apigateway.domain.http.req.sendcode
 
-import com.lawsofnature.apigateway.validate.Validator.Validate
+import com.lawsofnature.apigateway.validate.Validator._
 import com.lawsofnature.common.exception.ErrorCode._
 
 @SerialVersionUID(0L)
@@ -134,7 +134,7 @@ final case class SendLoginVerificationCodeReq(
     };
   }
 
-  def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq = {
+  def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): com.lawsofnature.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq = {
     var __deviceType = this.deviceType
     var __fingerPrint = this.fingerPrint
     var __mobile = this.mobile
@@ -173,7 +173,7 @@ final case class SendLoginVerificationCodeReq(
         case tag => _input__.skipField(tag)
       }
     }
-    com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq(
+    com.lawsofnature.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq(
       deviceType = __deviceType,
       fingerPrint = __fingerPrint,
       mobile = __mobile,
@@ -254,16 +254,16 @@ final case class SendLoginVerificationCodeReq(
 
   override def toString: String = _root_.com.trueaccord.scalapb.TextFormat.printToUnicodeString(this)
 
-  def companion = com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq
+  def companion = com.lawsofnature.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq
 }
 
-object SendLoginVerificationCodeReq extends com.trueaccord.scalapb.GeneratedMessageCompanion[com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq] {
-  implicit def messageCompanion: com.trueaccord.scalapb.GeneratedMessageCompanion[com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq] = this
+object SendLoginVerificationCodeReq extends com.trueaccord.scalapb.GeneratedMessageCompanion[com.lawsofnature.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq] {
+  implicit def messageCompanion: com.trueaccord.scalapb.GeneratedMessageCompanion[com.lawsofnature.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq] = this
 
-  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq = {
+  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): com.lawsofnature.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq = {
     require(__fieldsMap.keys.forall(_.getContainingType() == descriptor), "FieldDescriptor does not match message type.")
     val __fields = descriptor.getFields
-    com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq(
+    com.lawsofnature.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq(
       __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[Int],
       __fieldsMap.getOrElse(__fields.get(1), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(2), "").asInstanceOf[String],
@@ -277,16 +277,16 @@ object SendLoginVerificationCodeReq extends com.trueaccord.scalapb.GeneratedMess
     )
   }
 
-  def descriptor: _root_.com.google.protobuf.Descriptors.Descriptor = ReqProto.descriptor.getMessageTypes.get(0)
+  def descriptor: _root_.com.google.protobuf.Descriptors.Descriptor = SendcodeProto.descriptor.getMessageTypes.get(0)
 
   def messageCompanionForField(__field: _root_.com.google.protobuf.Descriptors.FieldDescriptor): _root_.com.trueaccord.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__field)
 
   def enumCompanionForField(__field: _root_.com.google.protobuf.Descriptors.FieldDescriptor): _root_.com.trueaccord.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__field)
 
-  lazy val defaultInstance = com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq(
+  lazy val defaultInstance = com.lawsofnature.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq(
   )
 
-  implicit class SendLoginVerificationCodeReqLens[UpperPB](_l: _root_.com.trueaccord.lenses.Lens[UpperPB, com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq]) extends _root_.com.trueaccord.lenses.ObjectLens[UpperPB, com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq](_l) {
+  implicit class SendLoginVerificationCodeReqLens[UpperPB](_l: _root_.com.trueaccord.lenses.Lens[UpperPB, com.lawsofnature.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq]) extends _root_.com.trueaccord.lenses.ObjectLens[UpperPB, com.lawsofnature.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq](_l) {
     def deviceType: _root_.com.trueaccord.lenses.Lens[UpperPB, Int] = field(_.deviceType)((c_, f_) => c_.copy(deviceType = f_))
 
     def fingerPrint: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.fingerPrint)((c_, f_) => c_.copy(fingerPrint = f_))

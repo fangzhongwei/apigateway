@@ -6,8 +6,9 @@ import RpcEd.EncryptResponse
 import RpcMember.MemberResponse
 import RpcSSO.{CreateSessionRequest, SSOBaseResponse, SessionResponse}
 import RpcSms.BaseResponse
-import com.lawsofnature.apigateway.domain.http.req.LoginReq
+import com.lawsofnature.apigateway.domain.http.req.login.LoginReq
 import com.lawsofnature.apigateway.domain.http.resp.LoginResp
+import com.lawsofnature.common.exception.ErrorCode
 import com.lawsofnature.edcenter.client.EdClientService
 import com.lawsofnature.sso.client.SSOClientService
 
@@ -37,7 +38,7 @@ class SessionServiceImpl @Inject()(edClientService: EdClientService, ssoClientSe
             val memberResponse: MemberResponse = memberService.getMemberByMobile(traceId, ticket)
             memberResponse.code match {
               case "0" =>
-                val sessionResponse: SessionResponse = ssoClientService.createSession(traceId, new CreateSessionRequest(r.clientId, ip, r.deviceType, r.fingerPrint, memberResponse.memberId))
+                val sessionResponse: SessionResponse = ssoClientService.createSession(traceId, new CreateSessionRequest(r.clientId, r.version, ip, r.deviceType, r.fingerPrint, memberResponse.memberId))
                 LoginResp(code = "0",
                   token = sessionResponse.token,
                   mobile = sessionResponse.identity,
@@ -62,11 +63,14 @@ class SessionServiceImpl @Inject()(edClientService: EdClientService, ssoClientSe
     val memberResponse: MemberResponse = memberService.getMemberByMemberId(traceId, session.memberId)
     memberResponse.code match {
       case "0" =>
-        LoginResp(code = "0",
-          token = session.token,
-          mobile = session.identity,
-          status = memberResponse.status,
-          nickName = memberResponse.nickName)
+        memberResponse.status match {
+          case -1 => LoginResp(code = ErrorCode.EC_UC_MEMBER_ACCOUNT_FREEZE.getCode)
+          case _ =>  LoginResp(code = "0",
+            token = session.token,
+            mobile = session.identity,
+            status = memberResponse.status,
+            nickName = memberResponse.nickName)
+        }
       case _ =>
         LoginResp(code = memberResponse.code)
     }

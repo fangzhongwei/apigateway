@@ -4,7 +4,8 @@ import javax.inject.Inject
 
 import RpcEd.EncryptResponse
 import RpcSms.{BaseResponse, SendLoginVerificationCodeRequest, SendLoginVerificationCodeResponse, VerifyLoginVerificationCodeRequest}
-import com.lawsofnature.apigateway.domain.http.req.{LoginReq, SendLoginVerificationCodeReq}
+import com.lawsofnature.apigateway.domain.http.req.login.LoginReq
+import com.lawsofnature.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq
 import com.lawsofnature.edcenter.client.EdClientService
 import com.lawsofnature.sms.client.SmsClientService
 

@@ -4,7 +4,8 @@ import javax.inject.Inject
 
 import RpcSSO.SSOBaseResponse
 import com.lawsofnature.apigateway.annotations.{ApiMapping, Param}
-import com.lawsofnature.apigateway.domain.http.req.{LoginByTokenReq, LoginReq}
+import com.lawsofnature.apigateway.domain.http.req.login.LoginReq
+import com.lawsofnature.apigateway.domain.http.req.loginbytoken.LoginByTokenReq
 import com.lawsofnature.apigateway.domain.http.resp.{LoginResp, SimpleApiResponse}
 import com.lawsofnature.apigateway.enumerate.ParamSource
 import com.lawsofnature.apigateway.service.SessionService
@@ -24,7 +25,7 @@ trait SSOAction {
 class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction with BaseAction {
 
   @ApiMapping(id = 1002, ignoreSession = true)
-  override def login(@Param(required = true, source = ParamSource.HEADER, name = "traceId")
+  override def login(@Param(required = true, source = ParamSource.HEADER, name = "TI")
                      traceId: String,
                      @Param(required = true, source = ParamSource.HEADER, name = "X-Real-Ip")
                      ip: String,
@@ -39,10 +40,9 @@ class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction 
   }
 
   @ApiMapping(id = 1004)
-  override def logout(@Param(required = true, source = ParamSource.HEADER, name = "traceId")
+  override def logout(@Param(required = true, source = ParamSource.HEADER, name = "TI")
                       traceId: String): SimpleApiResponse = {
     val response: SSOBaseResponse = sessionService.logout(traceId, getSession.token)
     SimpleApiResponse(code = response.code)
   }
-
 }

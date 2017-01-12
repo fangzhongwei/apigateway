@@ -3,15 +3,17 @@
 //
 // Protofile syntax: PROTO3
 
-package com.lawsofnature.apigateway.domain.http.req
+package com.lawsofnature.apigateway.domain.http.req.login
 
-import com.lawsofnature.apigateway.validate.Validator.Validate
+import com.lawsofnature.apigateway.validate.Validator._
 import com.lawsofnature.common.exception.ErrorCode._
 
 @SerialVersionUID(0L)
 final case class LoginReq(
                            @Validate(required = true, min = 1, max = 4, error = EC_INVALID_REQUEST)
                            clientId: Int = 0,
+                           @Validate(required = true, maxLength = 16, error = EC_INVALID_REQUEST)
+                           version: String = "",
                            @Validate(required = true, min = 1, max = 4, error = EC_INVALID_REQUEST)
                            deviceType: Int = 0,
                            @Validate(required = true, maxLength = 128, error = EC_INVALID_REQUEST)
@@ -34,32 +36,35 @@ final case class LoginReq(
     if (clientId != 0) {
       __size += _root_.com.google.protobuf.CodedOutputStream.computeInt32Size(1, clientId)
     }
+    if (version != "") {
+      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(2, version)
+    }
     if (deviceType != 0) {
-      __size += _root_.com.google.protobuf.CodedOutputStream.computeInt32Size(2, deviceType)
+      __size += _root_.com.google.protobuf.CodedOutputStream.computeInt32Size(3, deviceType)
     }
     if (fingerPrint != "") {
-      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(3, fingerPrint)
+      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(4, fingerPrint)
     }
     if (mobile != "") {
-      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(4, mobile)
+      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(5, mobile)
     }
     if (verificationCode != "") {
-      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(5, verificationCode)
+      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(6, verificationCode)
     }
     if (ext1 != "") {
-      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(6, ext1)
+      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(7, ext1)
     }
     if (ext2 != "") {
-      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(7, ext2)
+      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(8, ext2)
     }
     if (ext3 != "") {
-      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(8, ext3)
+      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(9, ext3)
     }
     if (ext4 != "") {
-      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(9, ext4)
+      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(10, ext4)
     }
     if (ext5 != "") {
-      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(10, ext5)
+      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(11, ext5)
     }
     __size
   }
@@ -81,63 +86,70 @@ final case class LoginReq(
       }
     };
     {
+      val __v = version
+      if (__v != "") {
+        _output__.writeString(2, __v)
+      }
+    };
+    {
       val __v = deviceType
       if (__v != 0) {
-        _output__.writeInt32(2, __v)
+        _output__.writeInt32(3, __v)
       }
     };
     {
       val __v = fingerPrint
       if (__v != "") {
-        _output__.writeString(3, __v)
+        _output__.writeString(4, __v)
       }
     };
     {
       val __v = mobile
       if (__v != "") {
-        _output__.writeString(4, __v)
+        _output__.writeString(5, __v)
       }
     };
     {
       val __v = verificationCode
       if (__v != "") {
-        _output__.writeString(5, __v)
+        _output__.writeString(6, __v)
       }
     };
     {
       val __v = ext1
       if (__v != "") {
-        _output__.writeString(6, __v)
+        _output__.writeString(7, __v)
       }
     };
     {
       val __v = ext2
       if (__v != "") {
-        _output__.writeString(7, __v)
+        _output__.writeString(8, __v)
       }
     };
     {
       val __v = ext3
       if (__v != "") {
-        _output__.writeString(8, __v)
+        _output__.writeString(9, __v)
       }
     };
     {
       val __v = ext4
       if (__v != "") {
-        _output__.writeString(9, __v)
+        _output__.writeString(10, __v)
       }
     };
     {
       val __v = ext5
       if (__v != "") {
-        _output__.writeString(10, __v)
+        _output__.writeString(11, __v)
       }
     };
   }
 
-  def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): com.lawsofnature.apigateway.domain.http.req.LoginReq = {
+  def mergeFrom(`_input__`: _root_.com.google.protobuf.CodedInputStream): com.lawsofnature.apigateway.domain.http.req.login.LoginReq = {
     var __clientId = this.clientId
+    var __version = this.version
     var __deviceType = this.deviceType
     var __fingerPrint = this.fingerPrint
     var __mobile = this.mobile
@@ -154,29 +166,32 @@ final case class LoginReq(
         case 0 => _done__ = true
         case 8 =>
           __clientId = _input__.readInt32()
-        case 16 =>
+        case 18 =>
+          __version = _input__.readString()
+        case 24 =>
           __deviceType = _input__.readInt32()
-        case 26 =>
-          __fingerPrint = _input__.readString()
         case 34 =>
-          __mobile = _input__.readString()
+          __fingerPrint = _input__.readString()
         case 42 =>
-          __verificationCode = _input__.readString()
+          __mobile = _input__.readString()
         case 50 =>
-          __ext1 = _input__.readString()
+          __verificationCode = _input__.readString()
         case 58 =>
-          __ext2 = _input__.readString()
+          __ext1 = _input__.readString()
         case 66 =>
-          __ext3 = _input__.readString()
+          __ext2 = _input__.readString()
         case 74 =>
-          __ext4 = _input__.readString()
+          __ext3 = _input__.readString()
         case 82 =>
+          __ext4 = _input__.readString()
+        case 90 =>
           __ext5 = _input__.readString()
         case tag => _input__.skipField(tag)
       }
     }
-    com.lawsofnature.apigateway.domain.http.req.LoginReq(
+    com.lawsofnature.apigateway.domain.http.req.login.LoginReq(
       clientId = __clientId,
+      version = __version,
       deviceType = __deviceType,
       fingerPrint = __fingerPrint,
       mobile = __mobile,
@@ -190,6 +205,8 @@ final case class LoginReq(
   }
 
   def withClientId(__v: Int): LoginReq = copy(clientId = __v)
+
+  def withVersion(__v: String): LoginReq = copy(version = __v)
 
   def withDeviceType(__v: Int): LoginReq = copy(deviceType = __v)
 
@@ -216,38 +233,42 @@ final case class LoginReq(
         if (__t != 0) __t else null
       }
       case 2 => {
+        val __t = version
+        if (__t != "") __t else null
+      }
+      case 3 => {
         val __t = deviceType
         if (__t != 0) __t else null
       }
-      case 3 => {
+      case 4 => {
         val __t = fingerPrint
         if (__t != "") __t else null
       }
-      case 4 => {
+      case 5 => {
         val __t = mobile
         if (__t != "") __t else null
       }
-      case 5 => {
+      case 6 => {
         val __t = verificationCode
         if (__t != "") __t else null
       }
-      case 6 => {
+      case 7 => {
         val __t = ext1
         if (__t != "") __t else null
       }
-      case 7 => {
+      case 8 => {
         val __t = ext2
         if (__t != "") __t else null
       }
-      case 8 => {
+      case 9 => {
         val __t = ext3
         if (__t != "") __t else null
       }
-      case 9 => {
+      case 10 => {
         val __t = ext4
         if (__t != "") __t else null
       }
-      case 10 => {
+      case 11 => {
         val __t = ext5
         if (__t != "") __t else null
       }
@@ -256,40 +277,43 @@ final case class LoginReq(
 
   override def toString: String = _root_.com.trueaccord.scalapb.TextFormat.printToUnicodeString(this)
 
-  def companion = com.lawsofnature.apigateway.domain.http.req.LoginReq
+  def companion = com.lawsofnature.apigateway.domain.http.req.login.LoginReq
 }
 
-object LoginReq extends com.trueaccord.scalapb.GeneratedMessageCompanion[com.lawsofnature.apigateway.domain.http.req.LoginReq] {
-  implicit def messageCompanion: com.trueaccord.scalapb.GeneratedMessageCompanion[com.lawsofnature.apigateway.domain.http.req.LoginReq] = this
+object LoginReq extends com.trueaccord.scalapb.GeneratedMessageCompanion[com.lawsofnature.apigateway.domain.http.req.login.LoginReq] {
+  implicit def messageCompanion: com.trueaccord.scalapb.GeneratedMessageCompanion[com.lawsofnature.apigateway.domain.http.req.login.LoginReq] = this
 
-  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): com.lawsofnature.apigateway.domain.http.req.LoginReq = {
+  def fromFieldsMap(__fieldsMap: scala.collection.immutable.Map[_root_.com.google.protobuf.Descriptors.FieldDescriptor, scala.Any]): com.lawsofnature.apigateway.domain.http.req.login.LoginReq = {
     require(__fieldsMap.keys.forall(_.getContainingType() == descriptor), "FieldDescriptor does not match message type.")
     val __fields = descriptor.getFields
-    com.lawsofnature.apigateway.domain.http.req.LoginReq(
+    com.lawsofnature.apigateway.domain.http.req.login.LoginReq(
       __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[Int],
-      __fieldsMap.getOrElse(__fields.get(1), 0).asInstanceOf[Int],
-      __fieldsMap.getOrElse(__fields.get(2), "").asInstanceOf[String],
+      __fieldsMap.getOrElse(__fields.get(1), "").asInstanceOf[String],
+      __fieldsMap.getOrElse(__fields.get(2), 0).asInstanceOf[Int],
       __fieldsMap.getOrElse(__fields.get(3), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(4), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(5), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(6), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(7), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(8), "").asInstanceOf[String],
-      __fieldsMap.getOrElse(__fields.get(9), "").asInstanceOf[String]
+      __fieldsMap.getOrElse(__fields.get(9), "").asInstanceOf[String],
+      __fieldsMap.getOrElse(__fields.get(10), "").asInstanceOf[String]
     )
   }
 
-  def descriptor: _root_.com.google.protobuf.Descriptors.Descriptor = ReqProto.descriptor.getMessageTypes.get(1)
+  def descriptor: _root_.com.google.protobuf.Descriptors.Descriptor = LoginProto.descriptor.getMessageTypes.get(0)
 
   def messageCompanionForField(__field: _root_.com.google.protobuf.Descriptors.FieldDescriptor): _root_.com.trueaccord.scalapb.GeneratedMessageCompanion[_] = throw new MatchError(__field)
 
   def enumCompanionForField(__field: _root_.com.google.protobuf.Descriptors.FieldDescriptor): _root_.com.trueaccord.scalapb.GeneratedEnumCompanion[_] = throw new MatchError(__field)
 
-  lazy val defaultInstance = com.lawsofnature.apigateway.domain.http.req.LoginReq(
+  lazy val defaultInstance = com.lawsofnature.apigateway.domain.http.req.login.LoginReq(
   )
 
-  implicit class LoginReqLens[UpperPB](_l: _root_.com.trueaccord.lenses.Lens[UpperPB, com.lawsofnature.apigateway.domain.http.req.LoginReq]) extends _root_.com.trueaccord.lenses.ObjectLens[UpperPB, com.lawsofnature.apigateway.domain.http.req.LoginReq](_l) {
+  implicit class LoginReqLens[UpperPB](_l: _root_.com.trueaccord.lenses.Lens[UpperPB, com.lawsofnature.apigateway.domain.http.req.login.LoginReq]) extends _root_.com.trueaccord.lenses.ObjectLens[UpperPB, com.lawsofnature.apigateway.domain.http.req.login.LoginReq](_l) {
     def clientId: _root_.com.trueaccord.lenses.Lens[UpperPB, Int] = field(_.clientId)((c_, f_) => c_.copy(clientId = f_))
+
+    def version: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.version)((c_, f_) => c_.copy(version = f_))
 
     def deviceType: _root_.com.trueaccord.lenses.Lens[UpperPB, Int] = field(_.deviceType)((c_, f_) => c_.copy(deviceType = f_))
 
@@ -311,13 +335,14 @@ object LoginReq extends com.trueaccord.scalapb.GeneratedMessageCompanion[com.law
   }
 
   final val CLIENTID_FIELD_NUMBER = 1
-  final val DEVICETYPE_FIELD_NUMBER = 2
-  final val FINGERPRINT_FIELD_NUMBER = 3
-  final val MOBILE_FIELD_NUMBER = 4
-  final val VERIFICATIONCODE_FIELD_NUMBER = 5
-  final val EXT1_FIELD_NUMBER = 6
-  final val EXT2_FIELD_NUMBER = 7
-  final val EXT3_FIELD_NUMBER = 8
-  final val EXT4_FIELD_NUMBER = 9
-  final val EXT5_FIELD_NUMBER = 10
+  final val VERSION_FIELD_NUMBER = 2
+  final val DEVICETYPE_FIELD_NUMBER = 3
+  final val FINGERPRINT_FIELD_NUMBER = 4
+  final val MOBILE_FIELD_NUMBER = 5
+  final val VERIFICATIONCODE_FIELD_NUMBER = 6
+  final val EXT1_FIELD_NUMBER = 7
+  final val EXT2_FIELD_NUMBER = 8
+  final val EXT3_FIELD_NUMBER = 9
+  final val EXT4_FIELD_NUMBER = 10
+  final val EXT5_FIELD_NUMBER = 11
 }

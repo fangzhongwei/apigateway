@@ -7,10 +7,9 @@ import RpcSSO.SessionResponse
 import akka.http.scaladsl.model.HttpHeader
 import com.lawsofnature.apigateway.annotations.{ApiMapping, Param}
 import com.lawsofnature.apigateway.conext.SessionContext
-import com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq
+import com.lawsofnature.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq
 import com.lawsofnature.apigateway.domain.http.resp.SimpleApiResponse
 import com.lawsofnature.apigateway.enumerate.ParamSource
-import com.lawsofnature.apigateway.helper.Constants
 import com.lawsofnature.apigateway.server.HttpService
 import com.lawsofnature.apigateway.service.SessionService
 import com.lawsofnature.apigateway.validate.Validator
@@ -38,6 +37,7 @@ object ActionInvoker {
   val HEADER_TRACE_ID = "TI"
   val HEADER_ACTION_ID = "AI"
   val HEADER_TOKEN = "TK"
+  val HEADER_FINGERPRINT = "FP"
 
   class ActionMethodParamAttribute(val source: ParamSource,
                                    val name: String,
@@ -245,6 +245,9 @@ object ActionInvoker {
                       case false =>
                         extractValueFromHeaders(HEADER_TOKEN, headers) match {
                           case Some(token) => val sessionResponse: SessionResponse = sessionService.touch(traceId, token)
+                            if (!sessionResponse.identity.equals(extractValueFromHeaders(HEADER_FINGERPRINT, headers).get)) {
+                              throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
+                            }
                             sessionResponse.code match {
                               case "0" => SessionContext.set(sessionResponse)
                               case _ => throw ServiceException.make(ErrorCode.get(sessionResponse.code))

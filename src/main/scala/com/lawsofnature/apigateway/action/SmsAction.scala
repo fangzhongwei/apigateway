@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import RpcSms.SendLoginVerificationCodeResponse
 import com.lawsofnature.apigateway.annotations.{ApiMapping, Param}
-import com.lawsofnature.apigateway.domain.http.req.SendLoginVerificationCodeReq
+import com.lawsofnature.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq
 import com.lawsofnature.apigateway.domain.http.resp.SendLoginVerificationCodeResp
 import com.lawsofnature.apigateway.enumerate.ParamSource
 import com.lawsofnature.apigateway.service.SmsService
