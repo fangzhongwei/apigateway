@@ -18,6 +18,7 @@ import com.lawsofnature.apigateway.action._
 import com.lawsofnature.apigateway.service._
 import com.lawsofnature.common.exception.ServiceException
 import com.lawsofnature.edcenter.client.{EdClientService, EdClientServiceImpl}
+import com.lawsofnature.i18n.client.{I18NClientService, I18NClientServiceImpl}
 import com.lawsofnature.member.client.{MemberClientService, MemberClientServiceImpl}
 import com.lawsofnature.sms.client.{SmsClientService, SmsClientServiceImpl}
 import com.lawsofnature.sso.client.{SSOClientService, SSOClientServiceImpl}
@@ -41,7 +42,6 @@ object HttpService extends App {
         proceed = methodInvocation.proceed()
       } catch {
         case e: Exception => logger.error("system", e)
-          proceed
       }
       logger.info("Call method " + name + " cost " + (System.currentTimeMillis() - millis))
       proceed
@@ -53,14 +53,17 @@ object HttpService extends App {
       val map: util.HashMap[String, String] = ConfigHelper.configMap
       Names.bindProperties(binder(), map)
       bind(classOf[MemberService]).to(classOf[MemberServiceImpl]).asEagerSingleton()
+      bind(classOf[I18NService]).to(classOf[I18NServiceImpl]).asEagerSingleton()
       bind(classOf[SmsService]).to(classOf[SmsServiceImpl]).asEagerSingleton()
       bind(classOf[SessionService]).to(classOf[SessionServiceImpl]).asEagerSingleton()
       bind(classOf[IcePrxFactory]).to(classOf[IcePrxFactoryImpl]).asEagerSingleton()
       bind(classOf[MemberClientService]).to(classOf[MemberClientServiceImpl]).asEagerSingleton()
+      bind(classOf[I18NClientService]).to(classOf[I18NClientServiceImpl]).asEagerSingleton()
       bind(classOf[SSOClientService]).to(classOf[SSOClientServiceImpl]).asEagerSingleton()
       bind(classOf[SmsClientService]).to(classOf[SmsClientServiceImpl]).asEagerSingleton()
       bind(classOf[SmsAction]).to(classOf[SmsActionImpl]).asEagerSingleton()
       bind(classOf[SSOAction]).to(classOf[SSOActionImpl]).asEagerSingleton()
+      bind(classOf[I18NAction]).to(classOf[I18NActionImpl]).asEagerSingleton()
       bind(classOf[EdClientService]).to(classOf[EdClientServiceImpl]).asEagerSingleton()
       //      bindInterceptor(Matchers.any(), Matchers.annotatedWith(classOf[ApiMapping]), apiMethodInterceptor)
       bindInterceptor(Matchers.any(), Matchers.any(), apiMethodInterceptor)
@@ -85,8 +88,9 @@ object HttpService extends App {
   }
 
   com.lawsofnature.apigateway.invoker.ActionInvoker.initActionMap
-//  injector.getInstance(classOf[MemberClientService]).initClient
-//  injector.getInstance(classOf[SSOClientService]).initClient
+  injector.getInstance(classOf[MemberClientService]).initClient
+  injector.getInstance(classOf[SSOClientService]).initClient
+  injector.getInstance(classOf[I18NClientService]).initClient
 
   implicit val system: ActorSystem = ActorSystem("http-system")
   implicit val materializer = ActorMaterializer()
