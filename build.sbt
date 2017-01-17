@@ -32,6 +32,7 @@ libraryDependencies += "com.lawsofnature.common" % "common-utils_2.11" % "1.0"
 libraryDependencies += "com.lawsofnature.sms" % "smsclient_2.11" % "1.0"
 libraryDependencies += "com.lawsofnature.edcenter" % "edclient_2.11" % "1.0"
 libraryDependencies += "com.lawsofnature.i18n" % "i18nclient_2.11" % "1.0"
+libraryDependencies += "com.lawsofnature.account" % "accountclient_2.11" % "1.0"
 
 // https://mvnrepository.com/artifact/com.trueaccord.scalapb/scalapb-runtime_2.11
 libraryDependencies += "com.trueaccord.scalapb" % "scalapb-runtime_2.11" % "0.5.46"
