@@ -12,7 +12,7 @@ import akka.stream.ActorMaterializer
 import com.google.inject.internal.LinkedBindingImpl
 import com.google.inject.matcher.Matchers
 import com.google.inject.name.Names
-import com.google.inject.{AbstractModule, Binding, Guice, Key, TypeLiteral}
+import com.google.inject.{AbstractModule, Binding, Guice, Injector, Key, TypeLiteral}
 import com.jxjxgo.account.rpc.domain.AccountEndpoint
 import com.jxjxgo.apigateway.action._
 import com.jxjxgo.apigateway.service._
@@ -31,12 +31,14 @@ import org.slf4j.{Logger, LoggerFactory}
 
 object HttpService {
   private[this] val logger: Logger = LoggerFactory.getLogger(getClass)
+  private[this] var injector: Injector = _
+  private[this] var actionBeanClassList: util.ArrayList[Class[_]] = _
 
   def main(args: Array[String]): Unit = {
 
     val conf = ConfigFactory.load()
 
-    var apiMethodInterceptor = new MethodInterceptor {
+    val apiMethodInterceptor = new MethodInterceptor {
       override def invoke(methodInvocation: MethodInvocation): AnyRef = {
         val millis: Long = System.currentTimeMillis()
         var name: String = null
@@ -53,7 +55,7 @@ object HttpService {
       }
     }
 
-    val injector = Guice.createInjector(new AbstractModule() {
+    injector = Guice.createInjector(new AbstractModule() {
       override def configure() {
         val map: util.HashMap[String, String] = ConfigHelper.configMap
         Names.bindProperties(binder(), map)
@@ -78,11 +80,11 @@ object HttpService {
       }
     })
 
-    private val bindings: util.Map[Key[_], Binding[_]] = injector.getBindings
+    val bindings: util.Map[Key[_], Binding[_]] = injector.getBindings
 
-    private val iterator: util.Iterator[Entry[Key[_], Binding[_]]] = bindings.entrySet().iterator()
+    val iterator: util.Iterator[Entry[Key[_], Binding[_]]] = bindings.entrySet().iterator()
 
-    val actionBeanClassList = new util.ArrayList[Class[_]]()
+    actionBeanClassList = new util.ArrayList[Class[_]]()
     while (iterator.hasNext) {
       val entry: Entry[Key[_], Binding[_]] = iterator.next()
 
@@ -123,4 +125,8 @@ object HttpService {
 
     logger.info("http server start up at " + port)
   }
+
+  def getInjector: Injector = injector
+  def getActionBeanClassList: util.ArrayList[Class[_]] = actionBeanClassList
+
 }

@@ -1,18 +1,18 @@
-package com.lawsofnature.apigateway.action
+package com.jxjxgo.apigateway.action
 
 import javax.inject.Inject
 
-import com.lawsofnature.apigateway.annotations.{ApiMapping, Param}
-import com.lawsofnature.apigateway.domain.http.req.depositrequest.DepositReq
-import com.lawsofnature.apigateway.domain.http.req.simple.SimpleReq
-import com.lawsofnature.apigateway.domain.http.resp.SimpleApiResponse
-import com.lawsofnature.apigateway.domain.http.resp.channellist.ChannelListResp
-import com.lawsofnature.apigateway.domain.http.resp.depositrecordresp.DepositRecordResp
-import com.lawsofnature.apigateway.domain.http.resp.depositrequestresp.DepositRequestResp
-import com.lawsofnature.apigateway.domain.http.resp.pricelist.PriceListResp
-import com.lawsofnature.apigateway.enumerate.ParamSource
-import com.lawsofnature.apigateway.service.AccountService
-import com.lawsofnature.common.exception.{ErrorCode, ServiceException}
+import com.jxjxgo.apigateway.annotations.{ApiMapping, Param}
+import com.jxjxgo.apigateway.domain.http.req.depositrequest.DepositReq
+import com.jxjxgo.apigateway.domain.http.req.simple.SimpleReq
+import com.jxjxgo.apigateway.domain.http.resp.SimpleApiResponse
+import com.jxjxgo.apigateway.domain.http.resp.channellist.ChannelListResp
+import com.jxjxgo.apigateway.domain.http.resp.depositrecordresp.DepositRecordResp
+import com.jxjxgo.apigateway.domain.http.resp.depositrequestresp.DepositRequestResp
+import com.jxjxgo.apigateway.domain.http.resp.pricelist.PriceListResp
+import com.jxjxgo.apigateway.enumerate.ParamSource
+import com.jxjxgo.apigateway.service.AccountService
+import com.jxjxgo.common.exception.{ErrorCode, ServiceException}
 import org.apache.commons.lang.StringUtils
 
 /**

@@ -9,6 +9,7 @@ import com.jxjxgo.apigateway.domain.http.resp.{LoginResp, SimpleApiResponse}
 import com.jxjxgo.apigateway.enumerate.ParamSource
 import com.jxjxgo.apigateway.service.SessionService
 import com.jxjxgo.common.helper.IPv4Helper
+import com.jxjxgo.sso.rpc.domain.SSOBaseResponse
 
 /**
   * Created by fangzhongwei on 2016/11/23.
@@ -34,7 +35,12 @@ class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction 
   }
 
   @ApiMapping(id = 1003)
-  override def loginByToken(traceId: String, ip: String, request: LoginByTokenReq): LoginResp = {
+  override def loginByToken(@Param(required = true, source = ParamSource.HEADER, name = "TI")
+                            traceId: String,
+                            @Param(required = true, source = ParamSource.HEADER, name = "X-Real-Ip")
+                            ip: String,
+                            @Param(required = true, source = ParamSource.BODY)
+                            request: LoginByTokenReq): LoginResp = {
     sessionService.loginByToken(traceId, getSession)
   }
 

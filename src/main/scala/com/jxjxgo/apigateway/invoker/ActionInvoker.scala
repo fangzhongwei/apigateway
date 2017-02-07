@@ -53,7 +53,7 @@ object ActionInvoker {
   private val apiMap: mutable.Map[Int, (Method, Option[Class[_]], ApiMapping, scala.collection.mutable.Seq[ActionMethodParamAttribute])] = scala.collection.mutable.Map()
 
   def initActionMap: Unit = {
-    val classList: util.ArrayList[Class[_]] = HttpService.actionBeanClassList
+    val classList: util.ArrayList[Class[_]] = HttpService.getActionBeanClassList
     val iterator: util.Iterator[Class[_]] = classList.iterator()
     var clazz: Class[_] = null
     while (iterator.hasNext) {
@@ -258,7 +258,7 @@ object ActionInvoker {
                     }
 
                     val paramValues: Array[AnyRef] = obtainParamValues(actionMethodParamAttributeSeq, headers, parameterMap, bodyArray, salt, parseClass)
-                    promise.success((true, responseBody(method.invoke(HttpService.injector.getInstance(method.getDeclaringClass), paramValues: _*).asInstanceOf[GeneratedMessage], salt)))
+                    promise.success((true, responseBody(method.invoke(HttpService.getInjector.getInstance(method.getDeclaringClass), paramValues: _*).asInstanceOf[GeneratedMessage], salt)))
                   case None => throw ServiceException.make(ErrorCode.EC_SYSTEM_ERROR)
                 }
               case None => throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
