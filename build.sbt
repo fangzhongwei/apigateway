@@ -4,12 +4,13 @@ version := "1.0"
 
 javacOptions ++= Seq("-encoding", "UTF-8")
 
+organization := "com.jxjxgo.apigateway"
+
 scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "5.1.36",
   "com.rabbitmq" % "amqp-client" % "3.6.5",
-  "com.zeroc" % "ice" % "3.6.2",
   "com.typesafe.akka" %% "akka-actor" % "2.4.14",
   "com.typesafe.akka" %% "akka-stream" % "2.4.14",
   "com.typesafe.akka" % "akka-http-core_2.11" % "10.0.0",
@@ -23,19 +24,21 @@ libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-library" % "2.11.8"
 )
 
-libraryDependencies += "com.lawsofnature.member" % "memberclient_2.11" % "1.0-SNAPSHOT"
-libraryDependencies += "com.lawsofnature.logback" % "kafka-logback_2.11" % "1.0-SNAPSHOT"
-libraryDependencies += "com.lawsofnature.common" % "common-error_2.11" % "1.0"
-libraryDependencies += "com.lawsofnature.common" % "common-edecrypt_2.11" % "1.0"
-libraryDependencies += "com.lawsofnature.client" % "ssoclient_2.11" % "1.0"
-libraryDependencies += "com.lawsofnature.common" % "common-utils_2.11" % "1.0"
-libraryDependencies += "com.lawsofnature.sms" % "smsclient_2.11" % "1.0"
-libraryDependencies += "com.lawsofnature.edcenter" % "edclient_2.11" % "1.0"
-libraryDependencies += "com.lawsofnature.i18n" % "i18nclient_2.11" % "1.0"
-libraryDependencies += "com.lawsofnature.account" % "accountclient_2.11" % "1.0"
-
 // https://mvnrepository.com/artifact/com.trueaccord.scalapb/scalapb-runtime_2.11
 libraryDependencies += "com.trueaccord.scalapb" % "scalapb-runtime_2.11" % "0.5.46"
+
+libraryDependencies += "com.jxjxgo.common" % "common-error_2.11" % "1.0"
+libraryDependencies += "com.jxjxgo.common" % "common-edecrypt_2.11" % "1.0"
+libraryDependencies += "com.jxjxgo.sms" % "smscommon_2.11" % "1.0"
+libraryDependencies += "com.jxjxgo.i18n" % "i18ncommonlib_2.11" % "1.0"
+
+libraryDependencies += "com.jxjxgo.sso" % "ssocommonlib_2.11" % "1.0"
+libraryDependencies += "com.jxjxgo.common" % "common-utils_2.11" % "1.0"
+
+libraryDependencies += "com.jxjxgo.edcenter" % "edclient_2.11" % "1.0"
+libraryDependencies += "com.jxjxgo.member" % "membercommonlib_2.11" % "1.0"
+libraryDependencies += "com.jxjxgo.account" % "accountcommonlib_2.11" % "1.0"
+
 
 
 

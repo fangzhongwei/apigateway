@@ -1,5 +1,5 @@
 syntax = "proto3";
-option java_package = "com.lawsofnature.apigateway.domain.http";
+option java_package = "com.jxjxgo.apigateway.domain.http";
 message SendLoginVerificationCodeReq {
     int32 deviceType = 1;
     string fingerPrint = 2;

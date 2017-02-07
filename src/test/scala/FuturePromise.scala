@@ -1,7 +1,7 @@
 
-import com.lawsofnature.apigateway.domain.http.req.login.LoginReq
-import com.lawsofnature.common.edecrypt.DESUtils
-import com.lawsofnature.common.helper.GZipHelper
+import com.jxjxgo.apigateway.domain.http.req.login.LoginReq
+import com.jxjxgo.common.edecrypt.DESUtils
+import com.jxjxgo.common.helper.GZipHelper
 
 /**
   * Created by fangzhongwei on 2016/10/25.
