@@ -7,8 +7,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.ExceptionHandler
 import akka.util.ByteString
 import com.jxjxgo.apigateway.action.SSOAction
-import com.jxjxgo.apigateway.invoker.ActionInvoker
-import com.jxjxgo.apigateway.service.SessionService
+import com.jxjxgo.apigateway.service.{ActionInvokerService, SessionService}
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.duration._
@@ -17,7 +16,7 @@ import scala.concurrent.duration._
   * Created by kgoralski on 2016-05-02.
   */
 @Named
-class Routes @Inject()(ssoAction: SSOAction, sessionService: SessionService) {
+class Routes @Inject()(ssoAction: SSOAction, sessionService: SessionService, actionInvokerService: ActionInvokerService) {
   val logger: Logger = LoggerFactory.getLogger(getClass)
   implicit val timeout = (90 seconds)
 
@@ -41,11 +40,12 @@ class Routes @Inject()(ssoAction: SSOAction, sessionService: SessionService) {
             paramMap => {
               entity(as[ByteString]) {
                 body =>
-                  onSuccess(ActionInvoker.invoke(sessionService, request.headers, paramMap, body.toArray)) {
+                  onSuccess(actionInvokerService.invoke(sessionService, request.headers, paramMap, body.toArray)) {
                     case result =>
                       logger.info("call service cost : " + (System.currentTimeMillis() - millis))
+                      logger.info("normal : " + result._1.toString)
                       val headers = List(
-                        RawHeader("NORMAL", result._1.toString)
+                        RawHeader("normal", result._1.toString)
                       )
                       respondWithHeaders(headers) {
                         complete(result._2)

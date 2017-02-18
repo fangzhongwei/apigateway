@@ -11,6 +11,7 @@ import com.jxjxgo.apigateway.service.I18NService
 import com.jxjxgo.common.exception.ErrorCode
 import com.jxjxgo.i18n.rpc.domain.{PullResourceRequest, ResourceResponse}
 import org.apache.commons.lang.StringUtils
+import org.slf4j.{Logger, LoggerFactory}
 
 /**
   * Created by fangzhongwei on 2017/1/13.
@@ -22,6 +23,7 @@ trait I18NAction {
 }
 
 class I18NActionImpl @Inject()(i18NService: I18NService) extends I18NAction {
+  val logger: Logger = LoggerFactory.getLogger(getClass)
   implicit def convert2Proto(response: ResourceResponse): ResourceResp = {
     val resourceList: Seq[com.jxjxgo.i18n.rpc.domain.Resource] = response.resourceList
     (resourceList != null && !resourceList.isEmpty) match {
@@ -49,7 +51,9 @@ class I18NActionImpl @Inject()(i18NService: I18NService) extends I18NAction {
       case true => ResourceResp(code = ErrorCode.EC_INVALID_REQUEST.getCode)
       case false => val resourceResponse: ResourceResponse = i18NService.getLatest(traceId, lan)
         resourceResponse.code match {
-          case "0" => resourceResponse
+          case "0" =>
+            logger.info(s"resourceResponse:$resourceResponse")
+            resourceResponse
           case _ => ResourceResp(code = resourceResponse.code)
         }
     }
