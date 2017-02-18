@@ -32,11 +32,11 @@ import scala.concurrent.{Future, Promise}
 /**
   * Created by fangzhongwei on 2016/11/28.
   */
-trait ActionInvokerService {
-  def invoke(sessionService: SessionService, headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte]): Future[(Boolean, Array[Byte])]
+trait ActionExecuteService {
+  def exe(sessionService: SessionService, headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte]): Future[(Boolean, Array[Byte])]
 }
 
-class ActionInvokerServiceImpl extends ActionInvokerService {
+class ActionExecuteServiceImpl extends ActionExecuteService {
   val logger: Logger = LoggerFactory.getLogger(getClass)
   implicit val timeout = (90 seconds)
 
@@ -45,7 +45,7 @@ class ActionInvokerServiceImpl extends ActionInvokerService {
   val HEADER_TOKEN = "TK"
   val HEADER_FINGERPRINT = "FP"
 
-  override def invoke(sessionService: SessionService, headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte]): Future[(Boolean, Array[Byte])] = {
+  override def exe(sessionService: SessionService, headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte]): Future[(Boolean, Array[Byte])] = {
     val promise: Promise[(Boolean, Array[Byte])] with Object = Promise[(Boolean, Array[Byte])]()
     Future {
       var traceId: String = null
