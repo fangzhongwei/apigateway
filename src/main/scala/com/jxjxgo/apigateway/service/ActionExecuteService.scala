@@ -1,26 +1,21 @@
 package com.jxjxgo.apigateway.service
 
-import java.lang.reflect.{InvocationTargetException, Method, Parameter}
-import java.util
+import java.lang.reflect.{InvocationTargetException, Method}
+import javax.inject.Inject
 
 import akka.http.scaladsl.model.HttpHeader
-import com.jxjxgo.apigateway.annotations.{ApiMapping, Param}
+import com.jxjxgo.apigateway.annotations.ApiMapping
 import com.jxjxgo.apigateway.base.ApiConfigContext.ActionMethodParamAttribute
 import com.jxjxgo.apigateway.base.{ApiConfigContext, ParamHelper}
 import com.jxjxgo.apigateway.conext.SessionContext
-import com.jxjxgo.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq
-import com.jxjxgo.apigateway.domain.http.req.simple.SimpleReq
 import com.jxjxgo.apigateway.domain.http.resp.SimpleApiResponse
-import com.jxjxgo.apigateway.enumerate.ParamSource
 import com.jxjxgo.apigateway.server.HttpService
-import com.jxjxgo.apigateway.validate.Validator
 import com.jxjxgo.common.edecrypt.DESUtils
 import com.jxjxgo.common.exception.{ErrorCode, ServiceException}
-import com.jxjxgo.common.helper.{GZipHelper, RegHelper}
+import com.jxjxgo.common.helper.GZipHelper
 import com.jxjxgo.sso.rpc.domain.SessionResponse
 import com.trueaccord.scalapb.GeneratedMessage
 import com.typesafe.config.ConfigFactory
-import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.immutable.Seq
@@ -33,10 +28,10 @@ import scala.concurrent.{Future, Promise}
   * Created by fangzhongwei on 2016/11/28.
   */
 trait ActionExecuteService {
-  def exe(sessionService: SessionService, headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte]): Future[(Boolean, Array[Byte])]
+  def exe(headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte]): Future[(Boolean, Array[Byte])]
 }
 
-class ActionExecuteServiceImpl extends ActionExecuteService {
+class ActionExecuteServiceImpl @Inject()(sessionService: SessionService) extends ActionExecuteService {
   val logger: Logger = LoggerFactory.getLogger(getClass)
   implicit val timeout = (90 seconds)
 
@@ -45,7 +40,27 @@ class ActionExecuteServiceImpl extends ActionExecuteService {
   val HEADER_TOKEN = "TK"
   val HEADER_FINGERPRINT = "FP"
 
-  override def exe(sessionService: SessionService, headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte]): Future[(Boolean, Array[Byte])] = {
+  //  def doExecute(actionId: Int, paramValues: Array[AnyRef]): GeneratedMessage = {
+  //    actionId match {
+  //      case 1001 => smsAction.sendLoginVerificationCode(paramValues(0).toString, paramValues(1).toString, paramValues(2).asInstanceOf[SendLoginVerificationCodeReq])
+  //      case 1002 => ssoAction.login(paramValues(0).toString, paramValues(1).toString, paramValues(2).asInstanceOf[LoginReq])
+  //      case 1003 => ssoAction.loginByToken(paramValues(0).toString, paramValues(1).toString, paramValues(2).asInstanceOf[LoginByTokenReq])
+  //      case 1004 => ssoAction.logout(paramValues(0).toString)
+  //      case 1005 => memberAction.updateNickName(paramValues(0).toString, paramValues(1).asInstanceOf[UpdateNickNameReq])
+  //      case 1006 => i18NAction.getLatest(paramValues(0).toString, paramValues(1).asInstanceOf[SimpleReq])
+  //      case 1007 => i18NAction.pullLatest(paramValues(0).toString, paramValues(1).asInstanceOf[PullResourceReq])
+  //
+  //      case 2001 => accountAction.queryDiamondAmount(paramValues(0).toString)
+  //      case 2002 => accountAction.getPriceList(paramValues(0).toString)
+  //      case 2003 => accountAction.getChannelList(paramValues(0).toString)
+  //      case 2004 => accountAction.depositRequest(paramValues(0).toString, paramValues(1).asInstanceOf[DepositReq])
+  //      case 2005 => accountAction.queryDeposit(paramValues(0).toString, paramValues(1).asInstanceOf[SimpleReq])
+  //
+  //      case _ => SimpleApiResponse(code = ErrorCode.EC_INVALID_REQUEST.getCode)
+  //    }
+  //  }
+
+  override def exe(headers: Seq[HttpHeader], parameterMap: Map[String, String], bodyArray: Array[Byte]): Future[(Boolean, Array[Byte])] = {
     val promise: Promise[(Boolean, Array[Byte])] with Object = Promise[(Boolean, Array[Byte])]()
     Future {
       var traceId: String = null
@@ -56,7 +71,8 @@ class ActionExecuteServiceImpl extends ActionExecuteService {
             ParamHelper.extractValueFromHeaders(HEADER_TRACE_ID, headers) match {
               case Some(ti) => traceId = ti
                 if (traceId.length != 32) throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
-                ApiConfigContext.getAipConfig(actionIdStr.toInt) match {
+                val actionId: Int = actionIdStr.toInt
+                ApiConfigContext.getAipConfig(actionId) match {
                   case Some(tuple) =>
                     val method: Method = tuple._1
                     val parseClass: Option[Class[_]] = tuple._2
@@ -80,13 +96,7 @@ class ActionExecuteServiceImpl extends ActionExecuteService {
                     }
 
                     val paramValues: Array[AnyRef] = ParamHelper.obtainParamValues(actionMethodParamAttributeSeq, headers, parameterMap, bodyArray, salt, parseClass)
-                    val invoke1: AnyRef = method.invoke(HttpService.getInjector.getInstance(method.getDeclaringClass), paramValues: _*)
-                    logger.info("invoke result:" + invoke1)
-                    logger.info("invoke class:" + invoke1.getClass)
-
-
-
-                    promise.success(true, responseBody(invoke1.asInstanceOf[GeneratedMessage], salt))
+                    promise.success(true, responseBody(method.invoke(HttpService.getInjector.getInstance(method.getDeclaringClass), paramValues: _*).asInstanceOf[GeneratedMessage], salt))
                   case None => throw ServiceException.make(ErrorCode.EC_SYSTEM_ERROR)
                 }
               case None => throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)

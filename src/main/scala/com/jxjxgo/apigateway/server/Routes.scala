@@ -16,7 +16,7 @@ import scala.concurrent.duration._
   * Created by kgoralski on 2016-05-02.
   */
 @Named
-class Routes @Inject()(ssoAction: SSOAction, sessionService: SessionService, actionInvokerService: ActionExecuteService) {
+class Routes @Inject()(actionInvokerService: ActionExecuteService) {
   val logger: Logger = LoggerFactory.getLogger(getClass)
   implicit val timeout = (90 seconds)
 
@@ -40,7 +40,7 @@ class Routes @Inject()(ssoAction: SSOAction, sessionService: SessionService, act
             paramMap => {
               entity(as[ByteString]) {
                 body =>
-                  onSuccess(actionInvokerService.exe(sessionService, request.headers, paramMap, body.toArray)) {
+                  onSuccess(actionInvokerService.exe(request.headers, paramMap, body.toArray)) {
                     case result =>
                       logger.info("call service cost : " + (System.currentTimeMillis() - millis))
                       logger.info("normal : " + result._1.toString)

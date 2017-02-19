@@ -34,7 +34,7 @@ class SSOActionImpl @Inject()(sessionService: SessionService) extends SSOAction 
     sessionService.login(traceId, IPv4Helper.ipToLong(ip), request)
   }
 
-  @ApiMapping(id = 1003)
+  @ApiMapping(id = 1003, ignoreSession = true)
   override def loginByToken(@Param(required = true, source = ParamSource.HEADER, name = "TI")
                             traceId: String,
                             @Param(required = true, source = ParamSource.HEADER, name = "X-Real-Ip")

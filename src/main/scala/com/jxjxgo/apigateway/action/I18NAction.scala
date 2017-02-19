@@ -28,12 +28,12 @@ class I18NActionImpl @Inject()(i18NService: I18NService) extends I18NAction {
     val resourceList: Seq[com.jxjxgo.i18n.rpc.domain.Resource] = response.resourceList
     (resourceList != null && !resourceList.isEmpty) match {
       case true =>
-        ResourceResp(latestVersion = response.latestVersion)
-      case false =>
         val seq: Seq[Resource] = resourceList.map {
           r => Resource(version = r.version, resourceType = r.`type`, code = r.code, lan = r.lan, desc = r.desc)
         }
         ResourceResp(code = "0", latestVersion = response.latestVersion, list = seq)
+      case false =>
+        ResourceResp(code = "0", latestVersion = response.latestVersion)
     }
   }
 

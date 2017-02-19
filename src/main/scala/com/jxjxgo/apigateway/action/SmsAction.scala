@@ -21,7 +21,7 @@ trait SmsAction {
 class SmsActionImpl @Inject()(smsService: SmsService) extends SmsAction {
   private[this] val logger: Logger = LoggerFactory.getLogger(getClass)
 
-  @ApiMapping(id = 1001, ignoreSession = false)
+  @ApiMapping(id = 1001, ignoreSession = true)
   override def sendLoginVerificationCode(@Param(required = true, source = ParamSource.HEADER, name = "TI")
                                          traceId: String,
                                          @Param(required = true, source = ParamSource.HEADER, name = "X-Real-Ip")

@@ -2,8 +2,13 @@ package com.jxjxgo.apigateway.base
 
 import akka.http.scaladsl.model.HttpHeader
 import com.jxjxgo.apigateway.base.ApiConfigContext.ActionMethodParamAttribute
+import com.jxjxgo.apigateway.domain.http.req.depositrequest.DepositReq
+import com.jxjxgo.apigateway.domain.http.req.login.LoginReq
+import com.jxjxgo.apigateway.domain.http.req.loginbytoken.LoginByTokenReq
+import com.jxjxgo.apigateway.domain.http.req.pullresource.PullResourceReq
 import com.jxjxgo.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq
 import com.jxjxgo.apigateway.domain.http.req.simple.SimpleReq
+import com.jxjxgo.apigateway.domain.http.req.updatenickname.UpdateNickNameReq
 import com.jxjxgo.apigateway.enumerate.ParamSource
 import com.jxjxgo.apigateway.validate.Validator
 import com.jxjxgo.common.edecrypt.DESUtils
@@ -61,10 +66,8 @@ object ParamHelper {
               attr.mask match {
                 case "" =>
                   if (attr.required && StringUtils.isBlank(strValue)) throw ServiceException.make(attr.errorCode)
-                  //minLength
                   minLength = attr.minLength
                   if (minLength != -1 && minLength > strValue.length) throw ServiceException.make(attr.errorCode)
-                  //maxLength
                   maxLength = attr.maxLength
                   if (maxLength != -1 && maxLength < strValue.length) throw ServiceException.make(attr.errorCode)
                 case _ =>
@@ -149,11 +152,23 @@ object ParamHelper {
     logger.info("body class name:" + clazz.getName)
 
     clazz.getName match {
-      case "com.jxjxgo.apigateway.domain.http.req.SendLoginVerificationCodeReq" =>
+      case "com.jxjxgo.apigateway.domain.http.req.depositrequest.DepositReq" =>
+        DepositReq.parseFrom(protoArray)
+      case "com.jxjxgo.apigateway.domain.http.req.login.LoginReq" =>
+        LoginReq.parseFrom(protoArray)
+      case "com.jxjxgo.apigateway.domain.http.req.loginbytoken.LoginByTokenReq" =>
+        LoginByTokenReq.parseFrom(protoArray)
+      case "com.jxjxgo.apigateway.domain.http.req.pullresource.PullResourceReq" =>
+        PullResourceReq.parseFrom(protoArray)
+      case "com.jxjxgo.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq" =>
         SendLoginVerificationCodeReq.parseFrom(protoArray)
       case "com.jxjxgo.apigateway.domain.http.req.simple.SimpleReq" =>
         SimpleReq.parseFrom(protoArray)
-      case _ => throw ServiceException.make(ErrorCode.EC_SYSTEM_ERROR)
+      case "com.jxjxgo.apigateway.domain.http.req.updatenickname.UpdateNickNameReq" =>
+        UpdateNickNameReq.parseFrom(protoArray)
+      case _ =>
+        logger.error(s"cass: ${clazz.getName} not config")
+        throw ServiceException.make(ErrorCode.EC_SYSTEM_ERROR)
     }
   }
 }

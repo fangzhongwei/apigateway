@@ -16,7 +16,6 @@ import com.google.inject.{AbstractModule, Binding, Guice, Injector, Key, TypeLit
 import com.jxjxgo.account.rpc.domain.AccountEndpoint
 import com.jxjxgo.apigateway.action._
 import com.jxjxgo.apigateway.base.ApiConfigContext
-import com.jxjxgo.apigateway.service
 import com.jxjxgo.apigateway.service.{ActionExecuteService, _}
 import com.jxjxgo.common.exception.ServiceException
 import com.jxjxgo.common.helper.ConfigHelper
@@ -67,6 +66,7 @@ object HttpService {
         bind(classOf[I18NService]).to(classOf[I18NServiceImpl]).asEagerSingleton()
         bind(classOf[SmsService]).to(classOf[SmsServiceImpl]).asEagerSingleton()
         bind(classOf[SessionService]).to(classOf[SessionServiceImpl]).asEagerSingleton()
+        bind(classOf[AccountService]).to(classOf[AccountServiceImpl]).asEagerSingleton()
         bind(classOf[ActionExecuteService]).to(classOf[ActionExecuteServiceImpl]).asEagerSingleton()
         bind(new TypeLiteral[MemberEndpoint[Future]]() {}).toInstance(Thrift.client.newIface[MemberEndpoint[Future]](config.getString("member.thrift.host.port")))
         bind(new TypeLiteral[EdServiceEndpoint[Future]]() {}).toInstance(Thrift.client.newIface[EdServiceEndpoint[Future]](config.getString("edcenter.thrift.host.port")))
@@ -76,8 +76,9 @@ object HttpService {
         bind(new TypeLiteral[SmsServiceEndpoint[Future]]() {}).toInstance(Thrift.client.newIface[SmsServiceEndpoint[Future]](config.getString("sms.thrift.host.port")))
         bind(classOf[SmsAction]).to(classOf[SmsActionImpl]).asEagerSingleton()
         bind(classOf[SSOAction]).to(classOf[SSOActionImpl]).asEagerSingleton()
+        bind(classOf[AccountAction]).to(classOf[AccountActionImpl]).asEagerSingleton()
         bind(classOf[I18NAction]).to(classOf[I18NActionImpl]).asEagerSingleton()
-        bind(classOf[AccountService]).to(classOf[AccountServiceImpl]).asEagerSingleton()
+        bind(classOf[MemberAction]).to(classOf[MemberActionImpl]).asEagerSingleton()
         //      bindInterceptor(Matchers.any(), Matchers.annotatedWith(classOf[ApiMapping]), apiMethodInterceptor)
         bindInterceptor(Matchers.any(), Matchers.any(), apiMethodInterceptor)
       }
@@ -130,6 +131,7 @@ object HttpService {
   }
 
   def getInjector: Injector = injector
+
   def getActionBeanClassList: util.ArrayList[Class[_]] = actionBeanClassList
 
 }
