@@ -122,8 +122,6 @@ class ActionExecuteServiceImpl @Inject()(sessionService: SessionService) extends
   }
 
   def responseBody(message: GeneratedMessage, salt: String): Array[Byte] = {
-    logger.info(s"return message is : $message")
     DESUtils.encrypt(GZipHelper.compress(message.toByteArray), salt)
   }
-
 }

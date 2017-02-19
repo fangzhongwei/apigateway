@@ -14,7 +14,7 @@ final case class SendLoginVerificationCodeReq(
                                                deviceType: Int = 0,
                                                @Validate(required = true, maxLength = 128, error = EC_INVALID_REQUEST)
                                                fingerPrint: String = "",
-                                               @Validate(required = true, mask = "^[1]([3][0-9]{1}|([4][7]{1})|([5][0-3|5-9]{1})|([8][0-9]{1}))[0-9]{8}$", error = EC_UC_INVALID_MOBILE)
+                                               @Validate(required = true, mask = "^[1]([3][0-9]{1}|([4][7]{1})|([5][0-3|5-9]{1})|([7][0135678]{1})|([8][0-9]{1}))[0-9]{8}$", error = EC_UC_INVALID_MOBILE)
                                                mobile: String = "",
                                                resend: Boolean = false,
                                                lastChannel: Int = 0,
