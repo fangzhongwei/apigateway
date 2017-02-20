@@ -22,6 +22,6 @@ class MemberActionImpl @Inject()(memberService: MemberService) extends MemberAct
                               traceId: String,
                               @Param(required = true, source = ParamSource.BODY)
                               updateNickNameReq: UpdateNickNameReq): SimpleApiResponse = {
-    SimpleApiResponse(code = memberService.updateNickName(traceId, getMemberId, updateNickNameReq.nickName).code)
+    SimpleApiResponse(code = memberService.updateNickName(traceId, getMemberId, updateNickNameReq.nickName.trim).code)
   }
 }

@@ -36,7 +36,7 @@ class AccountActionImpl @Inject()(accountService: AccountService) extends Accoun
   override def queryDiamondAmount(@Param(required = true, source = ParamSource.HEADER, name = "TI")
                                   traceId: String): SimpleApiResponse = {
     try {
-      accountService.queryDiamondBalance(traceId, getMemberId)
+      accountService.queryDiamondBalance(traceId, getMemberId, getSession.deviceType)
     } catch {
       case ex: ServiceException =>
         SimpleApiResponse(code = ex.getErrorCode.getCode)
@@ -49,7 +49,7 @@ class AccountActionImpl @Inject()(accountService: AccountService) extends Accoun
   override def getPriceList(@Param(required = true, source = ParamSource.HEADER, name = "TI")
                             traceId: String): PriceListResp = {
     try {
-      accountService.getPriceList(traceId)
+      accountService.getPriceList(traceId, getSession.deviceType)
     } catch {
       case ex: ServiceException =>
         PriceListResp(code = ex.getErrorCode.getCode)
@@ -62,7 +62,7 @@ class AccountActionImpl @Inject()(accountService: AccountService) extends Accoun
   override def getChannelList(@Param(required = true, source = ParamSource.HEADER, name = "TI")
                               traceId: String): ChannelListResp = {
     try {
-      accountService.getChannelList(traceId)
+      accountService.getChannelList(traceId, getSession.deviceType)
     } catch {
       case ex: ServiceException =>
         ChannelListResp(code = ex.getErrorCode.getCode)

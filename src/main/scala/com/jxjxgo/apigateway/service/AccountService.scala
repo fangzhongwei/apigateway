@@ -18,11 +18,11 @@ import com.twitter.util.{Await, Future}
   * Created by fangzhongwei on 2017/1/17.
   */
 trait AccountService {
-  def queryDiamondBalance(traceId: String, memberId: Long): SimpleApiResponse
+  def queryDiamondBalance(traceId: String, memberId: Long, deviceType: Int): SimpleApiResponse
 
-  def getPriceList(traceId: String): PriceListResp
+  def getPriceList(traceId: String, deviceType: Int): PriceListResp
 
-  def getChannelList(traceId: String): ChannelListResp
+  def getChannelList(traceId: String, deviceType: Int): ChannelListResp
 
   def depositRequest(traceId: String, memberId: Long, depositRequest: DepositReq): DepositRequestResp
 
@@ -30,16 +30,16 @@ trait AccountService {
 }
 
 class AccountServiceImpl @Inject()(accountClientService: AccountEndpoint[Future]) extends AccountService {
-  override def queryDiamondBalance(traceId: String, memberId: Long): SimpleApiResponse = {
-    val account: DiamondAccountResponse = Await.result(accountClientService.getAccount(traceId, memberId))
+  override def queryDiamondBalance(traceId: String, memberId: Long, deviceType: Int): SimpleApiResponse = {
+    val account: DiamondAccountResponse = Await.result(accountClientService.getAccount(traceId, memberId, deviceType))
     account.code match {
       case "0" => SimpleApiResponse(code = "0", ext1 = account.amount.toString)
       case _ => throw ServiceException.make(ErrorCode.get(account.code))
     }
   }
 
-  override def getPriceList(traceId: String): PriceListResp = {
-    val response: PriceListResponse = Await.result(accountClientService.getPriceList(traceId))
+  override def getPriceList(traceId: String, deviceType: Int): PriceListResp = {
+    val response: PriceListResponse = Await.result(accountClientService.getPriceList(traceId, deviceType))
     response.code match {
       case "0" =>
         val seq: Seq[Price] = Seq[Price]()
@@ -51,8 +51,8 @@ class AccountServiceImpl @Inject()(accountClientService: AccountEndpoint[Future]
     }
   }
 
-  override def getChannelList(traceId: String): ChannelListResp = {
-    val response: ChannelListResponse = Await.result(accountClientService.getChannelList(traceId))
+  override def getChannelList(traceId: String, deviceType: Int): ChannelListResp = {
+    val response: ChannelListResponse = Await.result(accountClientService.getChannelList(traceId, deviceType))
     response.code match {
       case "0" =>
         val seq: Seq[Channel] = Seq[Channel]()

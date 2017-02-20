@@ -69,35 +69,39 @@ class ActionExecuteServiceImpl @Inject()(sessionService: SessionService) extends
         ParamHelper.extractValueFromHeaders(HEADER_ACTION_ID, headers) match {
           case Some(actionIdStr) =>
             ParamHelper.extractValueFromHeaders(HEADER_TRACE_ID, headers) match {
-              case Some(ti) => traceId = ti
-                if (traceId.length != 32) throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
-                val actionId: Int = actionIdStr.toInt
-                ApiConfigContext.getAipConfig(actionId) match {
-                  case Some(tuple) =>
-                    val method: Method = tuple._1
-                    val parseClass: Option[Class[_]] = tuple._2
-                    val apiMapping: ApiMapping = tuple._3
-                    val actionMethodParamAttributeSeq: mutable.Seq[ActionMethodParamAttribute] = tuple._4
+              case Some(ti) =>
+                ParamHelper.extractValueFromHeaders(HEADER_FINGERPRINT, headers) match {
+                  case Some(fingerPrint) =>
+                    traceId = ti
+                    if (traceId.length != 32) throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
+                    val actionId: Int = actionIdStr.toInt
+                    ApiConfigContext.getAipConfig(actionId) match {
+                      case Some(tuple) =>
+                        val method: Method = tuple._1
+                        val parseClass: Option[Class[_]] = tuple._2
+                        val apiMapping: ApiMapping = tuple._3
+                        val actionMethodParamAttributeSeq: mutable.Seq[ActionMethodParamAttribute] = tuple._4
 
-                    apiMapping.ignoreSession() match {
-                      case false =>
-                        ParamHelper.extractValueFromHeaders(HEADER_TOKEN, headers) match {
-                          case Some(token) => val sessionResponse: SessionResponse = sessionService.touch(traceId, token)
-                            if (!sessionResponse.identity.equals(ParamHelper.extractValueFromHeaders(HEADER_FINGERPRINT, headers).get)) {
-                              throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
+                        apiMapping.ignoreSession() match {
+                          case false =>
+                            ParamHelper.extractValueFromHeaders(HEADER_TOKEN, headers) match {
+                              case Some(token) => val sessionResponse: SessionResponse = sessionService.touch(traceId, token)
+                                if (!sessionResponse.fingerPrint.equals(fingerPrint)) {
+                                  throw ServiceException.make(ErrorCode.EC_SSO_TOKEN_DEVICE_MISMATCH)
+                                }
+                                sessionResponse.code match {
+                                  case "0" => SessionContext.set(sessionResponse)
+                                  case _ => throw ServiceException.make(ErrorCode.get(sessionResponse.code))
+                                }
+                              case None => throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
                             }
-                            sessionResponse.code match {
-                              case "0" => SessionContext.set(sessionResponse)
-                              case _ => throw ServiceException.make(ErrorCode.get(sessionResponse.code))
-                            }
-                          case None => throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
+                          case _ =>
                         }
-                      case _ =>
+                        val paramValues: Array[AnyRef] = ParamHelper.obtainParamValues(actionMethodParamAttributeSeq, headers, parameterMap, bodyArray, salt, parseClass)
+                        promise.success(true, responseBody(method.invoke(HttpService.getInjector.getInstance(method.getDeclaringClass), paramValues: _*).asInstanceOf[GeneratedMessage], salt))
+                      case None => throw ServiceException.make(ErrorCode.EC_SYSTEM_ERROR)
                     }
-
-                    val paramValues: Array[AnyRef] = ParamHelper.obtainParamValues(actionMethodParamAttributeSeq, headers, parameterMap, bodyArray, salt, parseClass)
-                    promise.success(true, responseBody(method.invoke(HttpService.getInjector.getInstance(method.getDeclaringClass), paramValues: _*).asInstanceOf[GeneratedMessage], salt))
-                  case None => throw ServiceException.make(ErrorCode.EC_SYSTEM_ERROR)
+                  case None => throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
                 }
               case None => throw ServiceException.make(ErrorCode.EC_INVALID_REQUEST)
             }

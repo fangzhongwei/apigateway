@@ -113,7 +113,8 @@ object ParamHelper {
               longValue.asInstanceOf[AnyRef]
             case _ =>
               val bodyIsNull: Boolean = bodyArray == null || bodyArray.length == 0
-              if (attr.required && bodyIsNull) throw ServiceException.make(attr.errorCode)
+              if (attr.required && bodyIsNull)
+                throw ServiceException.make(attr.errorCode)
               val request: AnyRef = if (!bodyIsNull) parseRequest(bodyArray, salt, parseClass) else null
               if (request != null) {
                 Validator.validate(request) match {
