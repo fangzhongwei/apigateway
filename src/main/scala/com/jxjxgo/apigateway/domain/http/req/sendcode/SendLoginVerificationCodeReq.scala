@@ -16,7 +16,7 @@ final case class SendLoginVerificationCodeReq(
                                                fingerPrint: String = "",
                                                @Validate(required = true, mask = "^[1]([3][0-9]{1}|([4][7]{1})|([5][0-3|5-9]{1})|([7][0135678]{1})|([8][0-9]{1}))[0-9]{8}$", error = EC_UC_INVALID_MOBILE)
                                                mobile: String = "",
-                                               resend: Boolean = false,
+                                               resend: String = "",
                                                lastChannel: Int = 0,
                                                ext1: String = "",
                                                ext2: String = "",
@@ -38,8 +38,8 @@ final case class SendLoginVerificationCodeReq(
     if (mobile != "") {
       __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(3, mobile)
     }
-    if (resend != false) {
-      __size += _root_.com.google.protobuf.CodedOutputStream.computeBoolSize(4, resend)
+    if (resend != "") {
+      __size += _root_.com.google.protobuf.CodedOutputStream.computeStringSize(4, resend)
     }
     if (lastChannel != 0) {
       __size += _root_.com.google.protobuf.CodedOutputStream.computeInt32Size(5, lastChannel)
@@ -92,8 +92,8 @@ final case class SendLoginVerificationCodeReq(
     };
     {
       val __v = resend
-      if (__v != false) {
-        _output__.writeBool(4, __v)
+      if (__v != "") {
+        _output__.writeString(4, __v)
       }
     };
     {
@@ -156,8 +156,8 @@ final case class SendLoginVerificationCodeReq(
           __fingerPrint = _input__.readString()
         case 26 =>
           __mobile = _input__.readString()
-        case 32 =>
-          __resend = _input__.readBool()
+        case 34 =>
+          __resend = _input__.readString()
         case 40 =>
           __lastChannel = _input__.readInt32()
         case 50 =>
@@ -193,7 +193,7 @@ final case class SendLoginVerificationCodeReq(
 
   def withMobile(__v: String): SendLoginVerificationCodeReq = copy(mobile = __v)
 
-  def withResend(__v: Boolean): SendLoginVerificationCodeReq = copy(resend = __v)
+  def withResend(__v: String): SendLoginVerificationCodeReq = copy(resend = __v)
 
   def withLastChannel(__v: Int): SendLoginVerificationCodeReq = copy(lastChannel = __v)
 
@@ -223,7 +223,7 @@ final case class SendLoginVerificationCodeReq(
       }
       case 4 => {
         val __t = resend
-        if (__t != false) __t else null
+        if (__t != "") __t else null
       }
       case 5 => {
         val __t = lastChannel
@@ -267,7 +267,7 @@ object SendLoginVerificationCodeReq extends com.trueaccord.scalapb.GeneratedMess
       __fieldsMap.getOrElse(__fields.get(0), 0).asInstanceOf[Int],
       __fieldsMap.getOrElse(__fields.get(1), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(2), "").asInstanceOf[String],
-      __fieldsMap.getOrElse(__fields.get(3), false).asInstanceOf[Boolean],
+      __fieldsMap.getOrElse(__fields.get(3), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(4), 0).asInstanceOf[Int],
       __fieldsMap.getOrElse(__fields.get(5), "").asInstanceOf[String],
       __fieldsMap.getOrElse(__fields.get(6), "").asInstanceOf[String],
@@ -293,7 +293,7 @@ object SendLoginVerificationCodeReq extends com.trueaccord.scalapb.GeneratedMess
 
     def mobile: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.mobile)((c_, f_) => c_.copy(mobile = f_))
 
-    def resend: _root_.com.trueaccord.lenses.Lens[UpperPB, Boolean] = field(_.resend)((c_, f_) => c_.copy(resend = f_))
+    def resend: _root_.com.trueaccord.lenses.Lens[UpperPB, String] = field(_.resend)((c_, f_) => c_.copy(resend = f_))
 
     def lastChannel: _root_.com.trueaccord.lenses.Lens[UpperPB, Int] = field(_.lastChannel)((c_, f_) => c_.copy(lastChannel = f_))
 

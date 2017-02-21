@@ -8,6 +8,8 @@ organization := "com.jxjxgo.apigateway"
 
 scalaVersion := "2.11.8"
 
+mainClass in (Compile, run) := Some("com.jxjxgo.apigateway.server.HttpService")
+
 libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "5.1.36",
   "com.rabbitmq" % "amqp-client" % "3.6.5",

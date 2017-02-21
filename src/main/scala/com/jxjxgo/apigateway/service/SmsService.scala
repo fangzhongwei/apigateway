@@ -24,7 +24,7 @@ class SmsServiceImpl @Inject()(smsClientService: SmsServiceEndpoint[Future], edC
     val response: EncryptResponse = Await.result(edClientService.encrypt(traceId, req.mobile))
     response.code match {
       case "0" =>
-        Await.result(smsClientService.sendLoginVerificationCode(traceId, SendLoginVerificationCodeRequest(ip, req.deviceType, req.fingerPrint, response.ticket, sendLoginVerificationCodeSmsType, req.resend, req.lastChannel)))
+        Await.result(smsClientService.sendLoginVerificationCode(traceId, SendLoginVerificationCodeRequest(ip, req.deviceType, req.fingerPrint, response.ticket, sendLoginVerificationCodeSmsType, req.resend.equals("1"), req.lastChannel)))
       case _ => SendLoginVerificationCodeResponse(code = response.code)
     }
   }

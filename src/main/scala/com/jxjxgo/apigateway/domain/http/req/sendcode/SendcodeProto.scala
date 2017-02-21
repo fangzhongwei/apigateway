@@ -11,9 +11,9 @@ object SendcodeProto {
       com.trueaccord.scalapb.Encoding.fromBase64(scala.collection.Seq(
         """ChJyZXEvc2VuZGNvZGUucHJvdG8ilgIKHFNlbmRMb2dpblZlcmlmaWNhdGlvbkNvZGVSZXESHgoKZGV2aWNlVHlwZRgBIAEoB
   VIKZGV2aWNlVHlwZRIgCgtmaW5nZXJQcmludBgCIAEoCVILZmluZ2VyUHJpbnQSFgoGbW9iaWxlGAMgASgJUgZtb2JpbGUSFgoGc
-  mVzZW5kGAQgASgIUgZyZXNlbmQSIAoLbGFzdENoYW5uZWwYBSABKAVSC2xhc3RDaGFubmVsEhIKBGV4dDEYBiABKAlSBGV4dDESE
+  mVzZW5kGAQgASgJUgZyZXNlbmQSIAoLbGFzdENoYW5uZWwYBSABKAVSC2xhc3RDaGFubmVsEhIKBGV4dDEYBiABKAlSBGV4dDESE
   goEZXh0MhgHIAEoCVIEZXh0MhISCgRleHQzGAggASgJUgRleHQzEhIKBGV4dDQYCSABKAlSBGV4dDQSEgoEZXh0NRgKIAEoCVIEZ
-  Xh0NUItCitjb20ubGF3c29mbmF0dXJlLmFwaWdhdGV3YXkuZG9tYWluLmh0dHAucmVxYgZwcm90bzM="""
+  Xh0NUInCiVjb20uanhqeGdvLmFwaWdhdGV3YXkuZG9tYWluLmh0dHAucmVxYgZwcm90bzM="""
       ).mkString))
     com.google.protobuf.Descriptors.FileDescriptor.buildFrom(proto, Array(
     ))
