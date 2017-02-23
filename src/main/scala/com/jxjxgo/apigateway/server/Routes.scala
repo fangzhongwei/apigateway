@@ -79,6 +79,6 @@ class Routes @Inject()(actionInvokerService: ActionExecuteService) {
       //      }
     } ~ handleExceptions(myExceptionHandler) {
       logger.error("system error")
-      complete("invalid request")
+      complete("invalid request......")
     }
 }
