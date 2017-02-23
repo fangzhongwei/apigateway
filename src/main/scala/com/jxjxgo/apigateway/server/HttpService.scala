@@ -121,7 +121,7 @@ object HttpService {
         extractUri { uri =>
           logger.error(s"Request to $uri could not be handled normally")
           //        ResponseFactory.commonErrorResponse()
-          complete("invalid request")
+          complete("invalid request...")
         }
     }
 
