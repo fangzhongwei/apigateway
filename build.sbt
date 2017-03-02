@@ -38,6 +38,7 @@ libraryDependencies += "com.jxjxgo.common" % "common-utils_2.11" % "1.0"
 libraryDependencies += "com.jxjxgo.edcenter" % "edclient_2.11" % "1.0"
 libraryDependencies += "com.jxjxgo.member" % "membercommonlib_2.11" % "1.0"
 libraryDependencies += "com.jxjxgo.account" % "accountcommonlib_2.11" % "1.0"
+libraryDependencies += "com.jxjxgo.gamecenter" % "gamecommonlib_2.11" % "1.0"
 
 
 

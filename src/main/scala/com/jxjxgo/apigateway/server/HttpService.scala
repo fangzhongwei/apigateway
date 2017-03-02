@@ -20,6 +20,7 @@ import com.jxjxgo.apigateway.service.{ActionExecuteService, _}
 import com.jxjxgo.common.exception.ServiceException
 import com.jxjxgo.common.helper.ConfigHelper
 import com.jxjxgo.edcenter.rpc.domain.EdServiceEndpoint
+import com.jxjxgo.gamecenter.rpc.domain.GameEndpoint
 import com.jxjxgo.i18n.rpc.domain.I18NEndpoint
 import com.jxjxgo.memberber.rpc.domain.MemberEndpoint
 import com.jxjxgo.sms.rpc.domain.SmsServiceEndpoint
@@ -67,6 +68,7 @@ object HttpService {
         bind(classOf[SmsService]).to(classOf[SmsServiceImpl]).asEagerSingleton()
         bind(classOf[SessionService]).to(classOf[SessionServiceImpl]).asEagerSingleton()
         bind(classOf[AccountService]).to(classOf[AccountServiceImpl]).asEagerSingleton()
+        bind(classOf[GameService]).to(classOf[GameServiceImpl]).asEagerSingleton()
         bind(classOf[ActionExecuteService]).to(classOf[ActionExecuteServiceImpl]).asEagerSingleton()
         bind(new TypeLiteral[MemberEndpoint[Future]]() {}).toInstance(Thrift.client.newIface[MemberEndpoint[Future]](config.getString("member.thrift.host.port")))
         bind(new TypeLiteral[EdServiceEndpoint[Future]]() {}).toInstance(Thrift.client.newIface[EdServiceEndpoint[Future]](config.getString("edcenter.thrift.host.port")))
@@ -74,11 +76,13 @@ object HttpService {
         bind(new TypeLiteral[SSOServiceEndpoint[Future]]() {}).toInstance(Thrift.client.newIface[SSOServiceEndpoint[Future]](config.getString("sso.thrift.host.port")))
         bind(new TypeLiteral[I18NEndpoint[Future]]() {}).toInstance(Thrift.client.newIface[I18NEndpoint[Future]](config.getString("i18n.thrift.host.port")))
         bind(new TypeLiteral[SmsServiceEndpoint[Future]]() {}).toInstance(Thrift.client.newIface[SmsServiceEndpoint[Future]](config.getString("sms.thrift.host.port")))
+        bind(new TypeLiteral[GameEndpoint[Future]]() {}).toInstance(Thrift.client.newIface[GameEndpoint[Future]](config.getString("gamecenter.thrift.host.port")))
         bind(classOf[SmsAction]).to(classOf[SmsActionImpl]).asEagerSingleton()
         bind(classOf[SSOAction]).to(classOf[SSOActionImpl]).asEagerSingleton()
         bind(classOf[AccountAction]).to(classOf[AccountActionImpl]).asEagerSingleton()
         bind(classOf[I18NAction]).to(classOf[I18NActionImpl]).asEagerSingleton()
         bind(classOf[MemberAction]).to(classOf[MemberActionImpl]).asEagerSingleton()
+        bind(classOf[GameAction]).to(classOf[GameActionImpl]).asEagerSingleton()
         //      bindInterceptor(Matchers.any(), Matchers.annotatedWith(classOf[ApiMapping]), apiMethodInterceptor)
         bindInterceptor(Matchers.any(), Matchers.any(), apiMethodInterceptor)
       }

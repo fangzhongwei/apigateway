@@ -1,7 +1,8 @@
 
 import com.jxjxgo.apigateway.domain.http.req.login.LoginReq
+import com.jxjxgo.apigateway.domain.http.req.sendcode.SendLoginVerificationCodeReq
 import com.jxjxgo.common.edecrypt.DESUtils
-import com.jxjxgo.common.helper.GZipHelper
+import com.jxjxgo.common.helper.{GZipHelper, IPv4Helper}
 
 /**
   * Created by fangzhongwei on 2016/10/25.
@@ -48,22 +49,31 @@ object FuturePromise extends App {
   //  println("cost :" + cost/100000)
 
 
+//  import java.nio.file.{Files, Paths}
+//
+//  val byteArray = Files.readAllBytes(Paths.get("C:\\Users\\fangzhongwei\\RiderProjects\\Proto3Cs4\\Proto3Cs4\\bin\\Debug\\LoginReq.dat"))
+//
+//  println(byteArray.length)
+//
+//  private val compress: Array[Byte] = GZipHelper.compress(byteArray)
+//
+//  println(compress.length)
+//
+//  private val encrypt: Array[Byte] = DESUtils.encrypt(compress, "1234ABCD")
+//  println(encrypt.length)
+//
+//  private val from: LoginReq = LoginReq.parseFrom(byteArray)
+//
+//  println(from.fingerPrint)
+//  println(from.clientId)
+
+
   import java.nio.file.{Files, Paths}
 
-  val byteArray = Files.readAllBytes(Paths.get("C:\\Users\\fangzhongwei\\RiderProjects\\Proto3Cs4\\Proto3Cs4\\bin\\Debug\\LoginReq.dat"))
+  val byteArray = Files.readAllBytes(Paths.get("C:\\Users\\fangzhongwei\\Desktop\\Persons.dat"))
 
-  println(byteArray.length)
+  private val req: SendLoginVerificationCodeReq = SendLoginVerificationCodeReq.parseFrom(byteArray)
 
-  private val compress: Array[Byte] = GZipHelper.compress(byteArray)
-
-  println(compress.length)
-
-  private val encrypt: Array[Byte] = DESUtils.encrypt(compress, "1234ABCD")
-  println(encrypt.length)
-
-  private val from: LoginReq = LoginReq.parseFrom(byteArray)
-
-  println(from.fingerPrint)
-  println(from.clientId)
+  println(req)
 
 }
