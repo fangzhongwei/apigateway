@@ -40,6 +40,7 @@ class Routes @Inject()(actionInvokerService: ActionExecuteService) {
             paramMap => {
               entity(as[ByteString]) {
                 body =>
+                  logger.info("api id : " + request.headers.filter(h => h.name().equals("AI")).head)
                   onSuccess(actionInvokerService.exe(request.headers, paramMap, body.toArray)) {
                     case result =>
                       logger.info("call service cost : " + (System.currentTimeMillis() - millis))

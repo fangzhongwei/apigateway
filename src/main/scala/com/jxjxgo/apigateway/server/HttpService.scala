@@ -52,7 +52,7 @@ object HttpService {
         } catch {
           case e: Exception => logger.error("system", e)
         }
-        logger.info("Call method " + name + " cost " + (System.currentTimeMillis() - millis))
+//        logger.info("Call method " + name + " cost " + (System.currentTimeMillis() - millis))
         proceed
       }
     }
